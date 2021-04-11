@@ -7,7 +7,14 @@ import time
 from math import trunc
 
 
-class Client(object):
+class Phemex(object):
+
+    TAKER_FEE = 0.00075  # 0.075%
+    MAKER_FEE = -0.00025  # -0.025% (Rebate)
+
+    SCALE_EP_BTCUSD = 10000
+    SCALE_ER_BTCUSD = 100000000
+    SCALE_EV_BTCUSD = 100000000
 
     MAIN_NET_API_URL = 'https://api.phemex.com'
     TEST_NET_API_URL = 'https://testnet-api.phemex.com'

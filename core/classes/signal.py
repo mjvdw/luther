@@ -1,4 +1,5 @@
 from .strategy import Strategy
+from .phemex import Phemex
 from .user import User
 import pandas as pd
 # noinspection PyUnresolvedReferences
@@ -6,6 +7,7 @@ import pandas_ta as ta
 
 
 class Signal(object):
+
     ENTER_LONG = "ENTER_LONG"
     ENTER_SHORT = "ENTER_SHORT"
     EXIT = "EXIT"
@@ -133,12 +135,12 @@ class Signal(object):
 
         conditions = self.strategy.conditions  # Get a dictionary containing the conditions for trading.
         valid_conditions_format = self._validate_conditions_format(conditions=conditions)
-        is_trading = self.user.is_trading()
-
-        signals = []
+        is_trading = self.user.is_trading()  # Returns True if there is either an open position or unfilled order.
 
         if valid_conditions_format and not is_trading:
             # Evaluate entry conditions.
+
+            signals = []
 
             for condition in conditions["enter"]:
                 # Test each set of conditions.
@@ -162,24 +164,37 @@ class Signal(object):
                     }
                     signals.append(signal)
 
-        elif valid_conditions_format and is_trading:
+            if signals:
+                # Get signal with greatest confidence, if there are more than one.
+                greatest_confidence = max(signals, key=lambda x: x["confidence"])
+                self._action = greatest_confidence["action"]
+                self._confidence = greatest_confidence["confidence"]
+                self._strategy_type = greatest_confidence["strategy_type"]
+            else:
+                self._action = self.WAIT
+
+        elif valid_conditions_format and self.user.open_positions:
             # Evaluate exit conditions.
 
             condition = conditions["exit"]
-            current_price = self.data["closeEp"]
-
             open_positions = self.user.open_positions
 
             for position in open_positions:
-                print(position)
+                if position.net_pnl >= condition["take_profit"] or position.net_pnl <= condition["stop_loss"]:
+                    self._action = self.EXIT
+                    print("Take profit / stop loss")
+                else:
+                    for indicator in condition["indicators"]:
+                        key = indicator["key"]
+                        value = self.data[key].tail(1).values[0]
+                        limit = indicator["short_exit_limit"] if position.side == "Sell" \
+                            else indicator["long_exit_limit"]
+                        condition_str = str(value) + str(limit[1]) + str(limit[0])
+                        if eval(condition_str):
+                            self._action = self.EXIT
+                            print(f"Indicator: {key}")
 
-        if signals:
-            # Get signal with greatest confidence, if there are more than one.
-            greatest_confidence = max(signals, key=lambda x: x["confidence"])
-            self._action = greatest_confidence["action"]
-            self._confidence = greatest_confidence["confidence"]
-            self._strategy_type = greatest_confidence["strategy_type"]
-        else:
+        if not self.action:
             self._action = self.WAIT
 
     @staticmethod

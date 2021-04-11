@@ -135,23 +135,23 @@
       }
     ],
     "exit": {
-      "stop_loss_percent": 0,
-      "take_profit_percent": 0,
+      "stop_loss": -1,
+      "take_profit": 1,
       "indicators": [
         {
           "key": "RSI_6",
-          "short_exit_limit": 33,
-          "long_exit_limit": 67
+          "short_exit_limit": [33, "<"],
+          "long_exit_limit": [67, ">"]
         },
         {
           "key": "STOCHk_5_3_3",
-          "short_exit_limit": 20,
-          "long_exit_limit": 80
+          "short_exit_limit": [20, "<"],
+          "long_exit_limit": [80, ">"]
         },
         {
           "key": "STOCHd_5_3_3",
-          "short_exit_limit": 20,
-          "long_exit_limit": 80
+          "short_exit_limit": [20, "<"],
+          "long_exit_limit": [80, ">"]
         }
       ]
     }

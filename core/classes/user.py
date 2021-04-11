@@ -1,6 +1,6 @@
 import os
 
-from .phemex import Client
+from .phemex import Phemex
 from .phemex import PhemexAPIException
 from .strategy import Strategy
 from .position import Position
@@ -23,7 +23,8 @@ class User(object):
         Check whether there is an open position currently trading. If there is, return the position details wrapped
         in a Position object. Raise an error if there are none.
 
-        :return: A Position object containing details about the current open position.
+        :return: A Position object containing details about the current open position. Return empty array if there are
+        no open positions.
         """
 
         client = User.connect()
@@ -34,13 +35,11 @@ class User(object):
             for position_details in all_open_positions:
                 position = Position(position_details)
                 positions.append(position)
-        else:
-            raise PhemexAPIException("No open positions.")
 
         return positions
 
     @classmethod
-    def connect(cls) -> Client:
+    def connect(cls) -> Phemex:
         """
         Utility function providing a client object to connect to the Phemex API.
 
@@ -55,7 +54,7 @@ class User(object):
             api_secret = os.environ.get('PHEMEX_API_SECRET')
             test_net = False
 
-        client = Client(api_id, api_secret, test_net)
+        client = Phemex(api_id, api_secret, test_net)
 
         return client
 
@@ -71,7 +70,7 @@ class User(object):
 
         return is_trading
 
-    def _is_open_positions(self, client: Client) -> bool:
+    def _is_open_positions(self, client: Phemex) -> bool:
         """
         Query the users account for any open positions. The Phemex API returns an empty position if there are none,
         so test for whether that position's size is 0.
@@ -82,8 +81,9 @@ class User(object):
         num_positions = 0
         try:
             open_positions = client.query_account_n_positions(self.strategy.currency)["data"]["positions"]
-            for position in open_positions:
-                if position["size"] > 0:
+            for position_details in open_positions:
+                position = Position(position_details)
+                if position.size > 0:
                     num_positions += 1
             is_open_positions = num_positions > 0
         except PhemexAPIException:
@@ -91,7 +91,7 @@ class User(object):
 
         return is_open_positions
 
-    def _is_unfilled_orders(self, client: Client) -> bool:
+    def _is_unfilled_orders(self, client: Phemex) -> bool:
         """
         Query whether there are any unfilled orders. The Phemex API returns an error if there are none, so set to
         return False if there is a PhemexAPIException.
@@ -103,7 +103,7 @@ class User(object):
         try:
             open_orders = client.query_open_orders(self.strategy.symbol)["data"]["rows"]
             for order in open_orders:
-                if order["ordStatus"] == Client.ORDER_STATUS_NEW:
+                if order["ordStatus"] == Phemex.ORDER_STATUS_NEW:
                     num_unfilled_orders += 1
             is_unfilled_orders = num_unfilled_orders > 0
         except PhemexAPIException:
