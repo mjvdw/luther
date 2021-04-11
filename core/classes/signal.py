@@ -173,7 +173,7 @@ class Signal(object):
             else:
                 self._action = self.WAIT
 
-        elif valid_conditions_format and self.user.open_position:
+        elif valid_conditions_format and not is_trading and self.user.open_position:
             # Evaluate exit conditions.
 
             condition = conditions["exit"]

@@ -4,6 +4,7 @@ import uuid
 from .strategy import Strategy
 from .signal import Signal
 from .user import User
+from .phemex import Phemex
 
 
 class Order(object):
@@ -28,10 +29,16 @@ class Order(object):
 
         """
 
-        print(self._order_params)
+        client = User.connect()
 
-        # TODO: Set leverage.
-        # TODO: Send order parameters via Phemex API.
+        # Set leverage.
+        if self.signal.action != self.signal.EXIT:
+            client.change_leverage(symbol=self.strategy.symbol, leverage=self.signal.confidence)
+
+        # Send order parameters via Phemex API.
+        r = client.place_order(self._order_params)
+        print(r)
+
         # TODO: Save phemex response to CSV for future reference.
 
     def _generate_order_parameters(self):
@@ -60,15 +67,19 @@ class Order(object):
         side = "Buy" if self.signal.action == Signal.ENTER_LONG else "Sell"
         side_multiplier = -1 if side == "Sell" else 1  # Utility variable to convert parameters between longs/shorts.
 
-        current_price = self.data["closeEp"].tail(1).values[0]
+        # Convert to int because type returned by DataFrame is not JSON Serializable.
+        current_price = int(self.data["closeEp"].tail(1).values[0])
+
         # If order type is Market, the price is irrelevant, so calculate on the assumption it will be a Limit order.
         price = current_price - (side_multiplier * self.strategy.order_entry_params["limit_margin_ep"])
+        print(current_price, price)
 
         user = User(self.strategy)
         leverage = self.signal.confidence
         # Quantity must be no more than half the wallet balance, otherwise it isn't possible to exit the order
         # by submitting an order in the opposite direction. Therefore a 0.5 multiplier is hardcoded in.
-        quantity = user.wallet_balance * self.strategy.order_entry_params["wallet_ratio"] * 0.5 * leverage
+        wallet_ratio = self.strategy.order_entry_params["wallet_ratio"]
+        quantity = int(user.wallet_balance * wallet_ratio * 0.5 * leverage * (current_price/Phemex.SCALE_EP_BTCUSD))
 
         ord_type = self.strategy.order_entry_params["ord_type"]
         time_in_force = "PostOnly" if ord_type == "Limit" else "GoodTillCancel"
@@ -109,7 +120,9 @@ class Order(object):
         side = "Buy" if position.side == "Sell" else "Sell"
         side_multiplier = -1 if side == "Sell" else 1  # Utility variable to convert parameters between longs/shorts.
 
-        current_price = self.data["closeEp"].tail(1).values[0]
+        # Convert to int because type returned by DataFrame is not JSON Serializable.
+        current_price = int(self.data["closeEp"].tail(1).values[0])
+
         # If order type is Market, the price is irrelevant, so calculate on the assumption it will be a Limit order.
         price = current_price - (side_multiplier * self.strategy.order_exit_params["limit_margin_ep"])
 
@@ -124,7 +137,7 @@ class Order(object):
             "priceEp": price,
             "orderQty": position.size,
             "ordType": ord_type,
-            "reduceOnly": False,
+            "reduceOnly": True,
             "triggerType": "ByLastPrice",
             "timeInForce": time_in_force,
             "takeProfitEp": 0,
