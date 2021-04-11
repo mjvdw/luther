@@ -43,8 +43,6 @@ def trade_logic(strategy: Strategy) -> None:
         user = User(strategy)
         signal = Signal(data=market_data, strategy=strategy, user=user)
 
-        print(f"Signal received: {signal.action} | {signal.confidence} | {signal.strategy_type}")
-
         if signal.action != Signal.WAIT:
             order = Order(data=market_data, signal=signal, strategy=strategy)
             order.send()

@@ -173,26 +173,23 @@ class Signal(object):
             else:
                 self._action = self.WAIT
 
-        elif valid_conditions_format and self.user.open_positions:
+        elif valid_conditions_format and self.user.open_position:
             # Evaluate exit conditions.
 
             condition = conditions["exit"]
-            open_positions = self.user.open_positions
+            position = self.user.open_position
 
-            for position in open_positions:
-                if position.net_pnl >= condition["take_profit"] or position.net_pnl <= condition["stop_loss"]:
-                    self._action = self.EXIT
-                    print("Take profit / stop loss")
-                else:
-                    for indicator in condition["indicators"]:
-                        key = indicator["key"]
-                        value = self.data[key].tail(1).values[0]
-                        limit = indicator["short_exit_limit"] if position.side == "Sell" \
-                            else indicator["long_exit_limit"]
-                        condition_str = str(value) + str(limit[1]) + str(limit[0])
-                        if eval(condition_str):
-                            self._action = self.EXIT
-                            print(f"Indicator: {key}")
+            if position.net_pnl >= condition["take_profit"] or position.net_pnl <= condition["stop_loss"]:
+                self._action = self.EXIT
+            else:
+                for indicator in condition["indicators"]:
+                    key = indicator["key"]
+                    value = self.data[key].tail(1).values[0]
+                    limit = indicator["short_exit_limit"] if position.side == "Sell" \
+                        else indicator["long_exit_limit"]
+                    condition_str = str(value) + str(limit[1]) + str(limit[0])
+                    if eval(condition_str):
+                        self._action = self.EXIT
 
         if not self.action:
             self._action = self.WAIT

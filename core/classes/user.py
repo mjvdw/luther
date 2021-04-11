@@ -1,5 +1,6 @@
 import os
 
+from typing import Optional
 from .phemex import Phemex
 from .phemex import PhemexAPIException
 from .strategy import Strategy
@@ -18,16 +19,17 @@ class User(object):
         self.strategy = strategy
 
     @property
-    def open_positions(self) -> list:
+    def open_position(self) -> Optional[Position]:
         """
         Check whether there is an open position currently trading. If there is, return the position details wrapped
         in a Position object. Raise an error if there are none.
 
-        :return: A Position object containing details about the current open position. Return empty array if there are
-        no open positions.
+        :return: A Position object containing details about the current open position.
         """
 
         client = User.connect()
+
+        position = None
         positions = []
 
         if self._is_open_positions(client):
@@ -36,7 +38,25 @@ class User(object):
                 position = Position(position_details)
                 positions.append(position)
 
-        return positions
+        if len(positions) > 1:
+            raise IndexError("Too many positions received from API.")
+        elif len(positions) == 1:
+            position = positions[0]
+
+        return position
+
+    @property
+    def wallet_balance(self) -> float:
+        """
+        Retrieve the user's wallet balance in the relevant currency (provided by the strategy file).
+
+        :return: A float representing the user's wallet balance, scaled per the Phemex API.
+        """
+
+        client = self.connect()
+        wallet_balance = float(client.query_client_wallet()["data"][0]["userMarginVo"][0]["accountBalance"])
+
+        return wallet_balance
 
     @classmethod
     def connect(cls) -> Phemex:

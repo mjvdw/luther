@@ -132,6 +132,14 @@
           ["STOCHd_5_3_3", 80, ">"],
           ["RSI_6", 50, ">"]
         ]
+      },
+      {
+        "id": 7,
+        "action": "ENTER_LONG",
+        "confidence": 100,
+        "params": [
+          ["RSI_6", 0, ">"]
+        ]
       }
     ],
     "exit": {
@@ -154,6 +162,19 @@
           "long_exit_limit": [80, ">"]
         }
       ]
+    }
+  },
+  "order_params": {
+    "entry": {
+      "ord_type": "Limit",
+      "limit_margin_ep": 5000,
+      "wallet_ratio": 0.1,
+      "safety_tp": 0.05,
+      "safety_sl": 0.02
+    },
+    "exit": {
+      "ord_type": "Limit",
+      "limit_margin_ep": 5000
     }
   }
 }
