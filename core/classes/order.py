@@ -72,7 +72,6 @@ class Order(object):
 
         # If order type is Market, the price is irrelevant, so calculate on the assumption it will be a Limit order.
         price = current_price - (side_multiplier * self.strategy.order_entry_params["limit_margin_ep"])
-        print(current_price, price)
 
         user = User(self.strategy)
         leverage = self.signal.confidence

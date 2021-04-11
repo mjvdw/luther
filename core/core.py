@@ -3,7 +3,7 @@
 import pandas as pd
 
 from .classes.websocketconnection import WebsocketConnection
-from .classes.market import Market
+from .classes.database import Database
 from .classes.signal import Signal
 from .classes.strategy import Strategy
 from .classes.user import User
@@ -36,7 +36,7 @@ def trade_logic(strategy: Strategy) -> None:
     preferred trading strategy.
 
     """
-    market_data = pd.read_csv(Market.MARKET_DATA_PATH, index_col=0)
+    market_data = pd.read_csv(Database.MARKET_DATA_PATH, index_col=0)
 
     if not market_data.empty:
         # Check whether market_data DataFrame actually contains data, to avoid errors down the track.

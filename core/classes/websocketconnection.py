@@ -11,7 +11,7 @@ import websocket
 
 from typing import Callable
 from .strategy import Strategy
-from .market import Market
+from .database import Database
 
 
 class WebsocketConnection(object):
@@ -134,7 +134,7 @@ class WebsocketConnection(object):
         df = pd.DataFrame(data=market_data, index=index)
 
         if data_type == "incremental":
-            prev_df = pd.read_csv(Market.MARKET_DATA_PATH, index_col=0)
+            prev_df = pd.read_csv(Database.MARKET_DATA_PATH, index_col=0)
             prev_df.update(df)
 
             is_in_index = df.index.isin(prev_df.index)
@@ -145,4 +145,4 @@ class WebsocketConnection(object):
             else:
                 df = prev_df
 
-        df.to_csv(Market.MARKET_DATA_PATH, index=True)
+        df.to_csv(Database.MARKET_DATA_PATH, index=True)

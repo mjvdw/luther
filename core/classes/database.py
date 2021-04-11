@@ -1,7 +1,7 @@
 import os
 
 
-class Market(object):
+class Database(object):
 
     MARKET_DATA_PATH = os.path.join(os.path.dirname(__file__), '../../data/market_data.csv')
 

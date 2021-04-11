@@ -17,6 +17,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/core/classes/database.py">
+          <value>
+            <Attribute>
+              <option name="separator" value=":" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/core/classes/order.py">
           <value>
             <Attribute>
