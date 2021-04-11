@@ -4,7 +4,6 @@ import json
 import logging
 import threading
 import time
-import os
 
 import numpy as np
 import pandas as pd
@@ -12,11 +11,10 @@ import websocket
 
 from typing import Callable
 from .strategy import Strategy
+from .market import Market
 
 
 class WebsocketConnection(object):
-
-    MARKET_DATA_PATH = os.path.join(os.path.dirname(__file__), '../../data/market_data.csv')
 
     def __init__(self,
                  strategy: Strategy,
@@ -136,7 +134,7 @@ class WebsocketConnection(object):
         df = pd.DataFrame(data=market_data, index=index)
 
         if data_type == "incremental":
-            prev_df = pd.read_csv(self.MARKET_DATA_PATH, index_col=0)
+            prev_df = pd.read_csv(Market.MARKET_DATA_PATH, index_col=0)
             prev_df.update(df)
 
             is_in_index = df.index.isin(prev_df.index)
@@ -147,4 +145,4 @@ class WebsocketConnection(object):
             else:
                 df = prev_df
 
-        df.to_csv(self.MARKET_DATA_PATH, index=True)
+        df.to_csv(Market.MARKET_DATA_PATH, index=True)

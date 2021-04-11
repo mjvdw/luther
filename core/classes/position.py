@@ -1,5 +1,5 @@
 import pandas as pd
-from .websocketconnection import WebsocketConnection
+from .market import Market
 from .phemex import Phemex
 
 
@@ -13,7 +13,7 @@ class Position(object):
         """
         self.position_details = position_details
 
-        self._market_data = pd.read_csv(WebsocketConnection.MARKET_DATA_PATH, index_col=0)
+        self._market_data = pd.read_csv(Market.MARKET_DATA_PATH, index_col=0)
 
     @property
     def entry_price(self) -> int:

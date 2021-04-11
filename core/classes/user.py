@@ -9,7 +9,7 @@ from .position import Position
 
 class User(object):
 
-    TEST_NET: bool = False
+    TEST_NET: bool = True
 
     def __init__(self, strategy: Strategy):
         """

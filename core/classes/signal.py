@@ -139,57 +139,22 @@ class Signal(object):
 
         if valid_conditions_format and not is_trading:
             # Evaluate entry conditions.
-
-            signals = []
-
-            for condition in conditions["enter"]:
-                # Test each set of conditions.
-                params = condition["params"]
-                results = []
-
-                for param in params:
-                    # Test each parameter within one set of conditions.
-                    left = self.data[param[0]].tail(1).values[0] if type(param[0]) == str else param[0]
-                    right = self.data[param[1]].tail(1).values[0] if type(param[1]) == str else param[1]
-
-                    expression = str(left) + param[2] + str(right)  # Comparison expression string to be evaluated.
-                    passed = eval(expression)  # Result of evaluation.
-                    results.append(passed)
-
-                if all(results):
-                    signal = {
-                        "action": condition["action"],
-                        "confidence": condition["confidence"],
-                        "strategy_type": self.strategy.strategy_type
-                    }
-                    signals.append(signal)
-
-            if signals:
-                # Get signal with greatest confidence, if there are more than one.
-                greatest_confidence = max(signals, key=lambda x: x["confidence"])
-                self._action = greatest_confidence["action"]
-                self._confidence = greatest_confidence["confidence"]
-                self._strategy_type = greatest_confidence["strategy_type"]
-            else:
-                self._action = self.WAIT
+            signals = self.strategy.check_entry_conditions(data=self.data)
 
         elif valid_conditions_format and not is_trading and self.user.open_position:
             # Evaluate exit conditions.
+            signals = self.strategy.check_exit_conditions(data=self.data, position=self.user.open_position)
+        else:
+            signals = None
 
-            condition = conditions["exit"]
-            position = self.user.open_position
-
-            if position.net_pnl >= condition["take_profit"] or position.net_pnl <= condition["stop_loss"]:
-                self._action = self.EXIT
-            else:
-                for indicator in condition["indicators"]:
-                    key = indicator["key"]
-                    value = self.data[key].tail(1).values[0]
-                    limit = indicator["short_exit_limit"] if position.side == "Sell" \
-                        else indicator["long_exit_limit"]
-                    condition_str = str(value) + str(limit[1]) + str(limit[0])
-                    if eval(condition_str):
-                        self._action = self.EXIT
+        if signals:
+            # Get signal with greatest confidence, if there are more than one.
+            greatest_confidence = max(signals, key=lambda x: x["confidence"])
+            self._action = greatest_confidence["action"]
+            self._confidence = greatest_confidence["confidence"]
+            self._strategy_type = greatest_confidence["strategy_type"]
+        else:
+            self._action = self.WAIT
 
         if not self.action:
             self._action = self.WAIT
