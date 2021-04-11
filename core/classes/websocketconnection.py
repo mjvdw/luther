@@ -10,7 +10,7 @@ import pandas as pd
 import websocket
 
 from typing import Callable
-from .strategy import Strategy
+from core.classes.strategy.strategy import Strategy
 from .database import Database
 
 

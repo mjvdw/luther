@@ -1,7 +1,7 @@
 import pandas as pd
 import uuid
 
-from .strategy import Strategy
+from core.classes.strategy.strategy import Strategy
 from .signal import Signal
 from .user import User
 from .phemex import Phemex

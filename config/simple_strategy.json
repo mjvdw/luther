@@ -1,5 +1,5 @@
 {
-  "type": "SCALPING",
+  "type": "SIMPLE",
   "currency": "BTC",
   "symbol": "BTCUSD",
   "klines": {

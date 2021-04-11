@@ -1,5 +1,4 @@
-from .strategy import Strategy
-from .phemex import Phemex
+from core.classes.strategy.strategy import Strategy
 from .user import User
 import pandas as pd
 # noinspection PyUnresolvedReferences

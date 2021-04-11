@@ -3,7 +3,7 @@ import os
 from typing import Optional
 from .phemex import Phemex
 from .phemex import PhemexAPIException
-from .strategy import Strategy
+from core.classes.strategy.strategy import Strategy
 from .position import Position
 
 

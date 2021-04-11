@@ -5,7 +5,7 @@ import pandas as pd
 from .classes.websocketconnection import WebsocketConnection
 from .classes.database import Database
 from .classes.signal import Signal
-from .classes.strategy import Strategy
+from core.classes.strategy.strategy import Strategy
 from .classes.user import User
 from .classes.order import Order
 
