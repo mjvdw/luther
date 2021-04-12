@@ -32,11 +32,15 @@ class BreakoutStrategy(Strategy):
 
         # Use tapy to calculate fractals.
         indicators = Indicators(data)
-        indicators.fractals()  # indicators is a DataFrame containing the fractals data as boolean values for each row.
+        indicators.fractals(column_name_high='fractals_high', column_name_low='fractals_low')
+        fractals_df = indicators.df
 
         # TODO: Group the fractals around support and resistance zones. Do this by finding the two most recent zones, \
         #  and mark the highest as resistance and the lowest as support. The more touches each zone gets, the greater \
         #  the confidence for the trade.
+
+        high_prices = fractals_df.loc[fractals_df["fractals_high"]]["High"]
+        low_prices = fractals_df.loc[fractals_df["fractals_low"]]["Low"]
 
         # TODO: Test whether the current price falls above or below the relevant zone, returning an entry signal if it \
         #  does. Look into whether there are any other indicators I can also use to help verify a breakout.
