@@ -22,6 +22,6 @@ if __name__ == "__main__":
             strategy = BreakoutStrategy(strategy_params)
         else:
             strategy_type = strategy_params["type"]
-            raise TypeError(f"Invalid Strategy type: {strategy_type}")
+            raise TypeError(f"Invalid strategy type: {strategy_type}")
 
         run(strategy)  # Use strategy object to execute trading strategy.

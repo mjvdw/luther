@@ -17,10 +17,11 @@ class SimpleStrategy(Strategy):
 
     def check_entry_conditions(self, data: pd.DataFrame) -> list:
         """
+        Iterate through each condition as provided by the user and check whether the current market data meets all of
+        those condition.
 
-
-        :param data:
-        :return: A list containing
+        :param data: Market Data.
+        :return: A list containing all possible signals.
         """
         signals = []
 
@@ -50,10 +51,12 @@ class SimpleStrategy(Strategy):
 
     def check_exit_conditions(self, data: pd.DataFrame, position: Position) -> list:
         """
+        Iterate through each condition as provided by the user and check whether the current market data meets all of
+        those condition.
 
-        :param data:
-        :param position:
-        :return:
+        :param data: Market data.
+        :param position: The current open position as a Position object.
+        :return: A list containing the exit signal if applicable.
         """
         condition = self.conditions["exit"]
         signals = []
