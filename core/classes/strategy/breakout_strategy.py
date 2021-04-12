@@ -42,6 +42,9 @@ class BreakoutStrategy(Strategy):
         high_prices = fractals_df.loc[fractals_df["fractals_high"]]["High"]
         low_prices = fractals_df.loc[fractals_df["fractals_low"]]["Low"]
 
+        last_resistance_price = high_prices.tail(1).values[0]
+        last_support_price = low_prices.tail(1).values[0]
+
         # TODO: Test whether the current price falls above or below the relevant zone, returning an entry signal if it \
         #  does. Look into whether there are any other indicators I can also use to help verify a breakout.
 
