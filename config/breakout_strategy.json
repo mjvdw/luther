@@ -6,8 +6,9 @@
     "period": 60,
     "symbol": "BTCUSD"
   },
+  "indicators": [],
   "breakout": {
-    "area_width": 100
+    "area_width": 50
   },
   "conditions": {
     "enter": [

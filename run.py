@@ -10,7 +10,8 @@ from core.classes.strategy.breakout_strategy import BreakoutStrategy
 
 
 if __name__ == "__main__":
-    strategy_file = os.path.join(os.path.dirname(__file__), 'config/simple_strategy.json')
+    # strategy_file = os.path.join(os.path.dirname(__file__), 'config/simple_strategy.json')
+    strategy_file = os.path.join(os.path.dirname(__file__), 'config/breakout_strategy.json')
 
     with open(strategy_file, "r") as json_file:
         strategy_params = json.load(json_file)
