@@ -1,4 +1,3 @@
-from core.classes.strategy.strategy import Strategy
 from .user import User
 import pandas as pd
 # noinspection PyUnresolvedReferences
@@ -15,14 +14,14 @@ class Signal(object):
     SCALPING = "SCALPING"
     BREAKOUT = "BREAKOUT"
 
-    def __init__(self, data: pd.DataFrame, strategy: Strategy, user: User):
+    def __init__(self, data: pd.DataFrame, strategy, user: User):
         """
         Contains properties and methods for generating long, short, exit or wait signals, along with confidence level
         and trade type (eg, scalping v breakout). These properties are derived from technical indicators and the
         strategy given by the user.
 
         :param data: Market data received via websocket from Phemex.
-        :param strategy: a Strategy object containing user information about how and when to trade.
+        :param strategy: a Strategy subclass containing user information about how and when to trade.
         """
 
         self.data = data
@@ -134,13 +133,15 @@ class Signal(object):
 
         conditions = self.strategy.conditions  # Get a dictionary containing the conditions for trading.
         valid_conditions_format = self._validate_conditions_format(conditions=conditions)
-        is_trading = self.user.is_trading()  # Returns True if there is either an open position or unfilled order.
+
+        is_open_positions = self.user.is_open_positions
+        is_unfilled_orders = self.user.is_unfilled_orders
+        is_trading = self.user.is_trading  # is_trading is a combination or is_open_positions and is_unfilled_orders.
 
         if valid_conditions_format and not is_trading:
             # Evaluate entry conditions.
             signals = self.strategy.check_entry_conditions(data=self.data)
-
-        elif valid_conditions_format and not is_trading and self.user.open_position:
+        elif valid_conditions_format and not is_unfilled_orders and is_open_positions:
             # Evaluate exit conditions.
             signals = self.strategy.check_exit_conditions(data=self.data, position=self.user.open_position)
         else:

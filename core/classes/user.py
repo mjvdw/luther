@@ -32,11 +32,13 @@ class User(object):
         position = None
         positions = []
 
-        if self._is_open_positions(client):
+        if self._get_is_open_positions(client):
             all_open_positions = client.query_account_n_positions(self.strategy.currency)["data"]["positions"]
             for position_details in all_open_positions:
                 position = Position(position_details)
                 positions.append(position)
+        else:
+            position = None
 
         if len(positions) > 1:
             raise IndexError("Too many positions received from API.")
@@ -78,6 +80,7 @@ class User(object):
 
         return client
 
+    @property
     def is_trading(self) -> bool:
         """
         Determine whether the user is trading by checking whether there are any open orders or positions.
@@ -86,11 +89,31 @@ class User(object):
         """
 
         client = User.connect()
-        is_trading = self._is_open_positions(client) or self._is_unfilled_orders(client)
+        is_trading = self._get_is_open_positions(client) or self._get_is_unfilled_orders(client)
 
         return is_trading
 
-    def _is_open_positions(self, client: Phemex) -> bool:
+    @property
+    def is_open_positions(self) -> bool:
+        """
+        Whether there are any open positions as a property.
+        :return: Boolean representing whether there are any open positions.
+        """
+        client = User.connect()
+        is_open_positions = self._get_is_open_positions(client)
+        return is_open_positions
+
+    @property
+    def is_unfilled_orders(self) -> bool:
+        """
+        Whether there are any unfilled orders as a property.
+        :return: Boolean representing whether there are any unfilled orders.
+        """
+        client = User.connect()
+        is_unfilled_orders = self._get_is_unfilled_orders(client)
+        return is_unfilled_orders
+
+    def _get_is_open_positions(self, client: Phemex) -> bool:
         """
         Query the users account for any open positions. The Phemex API returns an empty position if there are none,
         so test for whether that position's size is 0.
@@ -111,7 +134,7 @@ class User(object):
 
         return is_open_positions
 
-    def _is_unfilled_orders(self, client: Phemex) -> bool:
+    def _get_is_unfilled_orders(self, client: Phemex) -> bool:
         """
         Query whether there are any unfilled orders. The Phemex API returns an error if there are none, so set to
         return False if there is a PhemexAPIException.

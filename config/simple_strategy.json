@@ -135,6 +135,7 @@
       }
     ],
     "exit": {
+      "action": "EXIT",
       "stop_loss": -0.005,
       "take_profit": 0.01,
       "indicators": [

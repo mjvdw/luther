@@ -8,7 +8,7 @@ class Strategy(object):
     SIMPLE_STRATEGY = "SIMPLE"
     BREAKOUT_STRATEGY = "BREAKOUT"
 
-    def __init__(self, params):
+    def __init__(self, params: dict):
         """
         Generate useful properties by converting strategy JSON file into usable properties.
         :param params: A dictionary containing strategy parameters.

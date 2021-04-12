@@ -5,18 +5,22 @@ from ..position import Position
 
 
 class SimpleStrategy(Strategy):
-    def __init__(self, params):
+    def __init__(self, params: dict):
         """
+        An subclass providing condition checking functions for "Simple" strategies. The conditions, being simple, are
+        provided in the configuration file set by the user.
 
-        :param params:
+        :type params: Dictionary containing the strategy parameters set by the user.
+
         """
         super().__init__(params)
 
     def check_entry_conditions(self, data: pd.DataFrame) -> list:
         """
 
+
         :param data:
-        :return:
+        :return: A list containing
         """
         signals = []
 
@@ -52,22 +56,26 @@ class SimpleStrategy(Strategy):
         :return:
         """
         condition = self.conditions["exit"]
-        exit_condition = False
         signals = []
+        results = []
 
         if position.net_pnl >= condition["take_profit"] or position.net_pnl <= condition["stop_loss"]:
-            exit_condition = True
+            results.append(True)
         else:
             for indicator in condition["indicators"]:
                 key = indicator["key"]
                 value = data[key].tail(1).values[0]
-                limit = indicator["short_exit_limit"] if position.side == "Sell" \
-                    else indicator["long_exit_limit"]
-                condition_str = str(value) + str(limit[1]) + str(limit[0])
-                if eval(condition_str):
-                    exit_condition = True
 
-        if exit_condition:
+                short_limit = indicator["short_exit_limit"]
+                long_limit = indicator["long_exit_limit"]
+                limit = short_limit if position.side == "Sell" else long_limit
+
+                condition_str = str(value) + str(limit[1]) + str(limit[0])
+                print(condition_str, eval(condition_str))
+                if eval(condition_str):
+                    results.append(True)
+
+        if any(results):
             signal = {
                 "action": condition["action"],
                 "confidence": 1,
