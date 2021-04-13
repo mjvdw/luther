@@ -45,6 +45,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/core/classes/slack.py">
+          <value>
+            <Attribute>
+              <option name="separator" value=":" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/core/classes/strategy/breakout_strategy.py">
           <value>
             <Attribute>
@@ -88,6 +95,13 @@
           </value>
         </entry>
         <entry key="/data/market_data.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/tests/plot_fractals.py">
           <value>
             <Attribute>
               <option name="separator" value="," />

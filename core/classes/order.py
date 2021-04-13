@@ -5,6 +5,7 @@ from core.classes.strategy.strategy import Strategy
 from .signal import Signal
 from .user import User
 from .phemex import Phemex
+from .slack import Slack
 
 
 class Order(object):
@@ -37,7 +38,7 @@ class Order(object):
 
         # Send order parameters via Phemex API.
         r = client.place_order(self._order_params)
-        print(r)
+        Slack().send(f"Order response: {r}")
 
         # TODO: Save phemex response to CSV for future reference.
 

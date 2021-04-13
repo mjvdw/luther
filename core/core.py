@@ -8,6 +8,7 @@ from .classes.signal import Signal
 from core.classes.strategy.strategy import Strategy
 from .classes.user import User
 from .classes.order import Order
+from .classes.slack import Slack
 
 
 def run(strategy):
@@ -20,7 +21,7 @@ def run(strategy):
 
     ws_connection = WebsocketConnection(strategy=strategy,
                                         handler=trade_logic,
-                                        enable_trace=True)
+                                        enable_trace=False)
     ws_connection.run()
 
     # TODO: Include any closing tidy up logic.
@@ -44,8 +45,9 @@ def trade_logic(strategy: Strategy) -> None:
         user = User(strategy)
         signal = Signal(data=market_data, strategy=strategy, user=user)
 
-        print(signal.signal)
+        # print(signal.signal)
 
         if signal.action != Signal.WAIT:
+            Slack().send(f"Signal received: {signal}")
             order = Order(data=market_data, signal=signal, strategy=strategy)
             order.send()

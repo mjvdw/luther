@@ -1,6 +1,6 @@
 import pandas as pd
-from tapy import Indicators
 
+from tapy import Indicators
 from .strategy import Strategy
 
 
@@ -20,6 +20,8 @@ class BreakoutStrategy(Strategy):
         """
 
         This function uses the tapy library. See docs here: https://pandastechindicators.readthedocs.io/en/latest/
+        Also see: https://stackoverflow.com/questions/8587047/support-resistance-algorithm-technical-analysis
+
         :param data:
         :return:
         """
@@ -51,3 +53,10 @@ class BreakoutStrategy(Strategy):
         results = []
 
         return results
+
+    @staticmethod
+    def get_fractals(data: pd.DataFrame) -> pd.DataFrame:
+        indicators = Indicators(data)
+        indicators.fractals(column_name_high='fractals_high', column_name_low='fractals_low')
+        fractals_df = indicators.df
+        return fractals_df
