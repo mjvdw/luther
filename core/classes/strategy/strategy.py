@@ -7,6 +7,7 @@ class Strategy(object):
 
     SIMPLE_STRATEGY = "SIMPLE"
     BREAKOUT_STRATEGY = "BREAKOUT"
+    SCALPING_STRATEGY = "SCALPING"
 
     def __init__(self, params: dict):
         """

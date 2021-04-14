@@ -48,6 +48,6 @@ def trade_logic(strategy: Strategy) -> None:
         # print(signal.signal)
 
         if signal.action != Signal.WAIT:
-            Slack().send(f"Signal received: {signal}")
+            Slack().send(f"Signal received: {signal.action}, with confidence {signal.confidence}")
             order = Order(data=market_data, signal=signal, strategy=strategy)
             order.send()

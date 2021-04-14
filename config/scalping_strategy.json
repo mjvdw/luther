@@ -1,5 +1,5 @@
 {
-  "type": "SIMPLE",
+  "type": "SCALPING",
   "currency": "BTC",
   "symbol": "BTCUSD",
   "klines": {
@@ -138,24 +138,7 @@
       "action": "EXIT",
       "stop_loss": -0.005,
       "take_profit": 0.01,
-      "scalp_margin_ep": 5000,
-      "indicators": [
-        {
-          "key": "RSI_6",
-          "short_exit_limit": [33, "<"],
-          "long_exit_limit": [67, ">"]
-        },
-        {
-          "key": "STOCHk_5_3_3",
-          "short_exit_limit": [20, "<"],
-          "long_exit_limit": [80, ">"]
-        },
-        {
-          "key": "STOCHd_5_3_3",
-          "short_exit_limit": [20, "<"],
-          "long_exit_limit": [80, ">"]
-        }
-      ]
+      "indicators": []
     }
   },
   "order_params": {

@@ -124,7 +124,15 @@ class Order(object):
         current_price = int(self.data["closeEp"].tail(1).values[0])
 
         # If order type is Market, the price is irrelevant, so calculate on the assumption it will be a Limit order.
-        price = current_price - (side_multiplier * self.strategy.order_exit_params["limit_margin_ep"])
+        if self.strategy.strategy_type == Strategy.SCALPING_STRATEGY:
+            if position.side == "Sell":
+                relative_price = position.entry_price if current_price >= position.entry_price else current_price
+            else:
+                relative_price = position.entry_price if current_price <= position.entry_price else current_price
+        else:
+            relative_price = current_price
+
+        price = relative_price - (side_multiplier * self.strategy.order_exit_params["limit_margin_ep"])
 
         ord_type = self.strategy.order_exit_params["ord_type"]
         time_in_force = "PostOnly" if ord_type == "Limit" else "GoodTillCancel"
