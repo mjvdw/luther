@@ -47,7 +47,12 @@ def trade_logic(strategy: Strategy) -> None:
 
         # print(signal.signal)
 
-        if signal.action != Signal.WAIT:
+        if signal.action != Signal.WAIT and not user.is_unfilled_orders:
             Slack().send(f"Signal received: {signal.action}, with confidence {signal.confidence}")
             order = Order(data=market_data, signal=signal, strategy=strategy)
             order.send()
+        elif signal.action == Signal.WAIT and user.is_unfilled_orders and not user.is_open_positions:
+            print(signal.action)
+            Slack().send("Cancelling order.")
+            client = user.connect()
+            client.cancel_all(strategy.symbol)

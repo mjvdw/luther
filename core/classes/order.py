@@ -124,13 +124,13 @@ class Order(object):
         current_price = int(self.data["closeEp"].tail(1).values[0])
 
         # If order type is Market, the price is irrelevant, so calculate on the assumption it will be a Limit order.
-        if self.strategy.strategy_type == Strategy.SCALPING_STRATEGY:
-            if position.side == "Sell":
-                relative_price = position.entry_price if current_price >= position.entry_price else current_price
-            else:
-                relative_price = position.entry_price if current_price <= position.entry_price else current_price
-        else:
-            relative_price = current_price
+        # if self.strategy.strategy_type == Strategy.SCALPING_STRATEGY:
+        #     if position.side == "Sell":
+        #         relative_price = position.entry_price if current_price >= position.entry_price else current_price
+        #     else:
+        #         relative_price = position.entry_price if current_price <= position.entry_price else current_price
+        # else:
+        relative_price = current_price
 
         price = relative_price - (side_multiplier * self.strategy.order_exit_params["limit_margin_ep"])
 
