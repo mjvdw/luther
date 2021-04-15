@@ -13,8 +13,8 @@ from core.classes.slack import Slack
 
 if __name__ == "__main__":
     try:
-        strategy_file = os.path.join(os.path.dirname(__file__), 'config/scalping_strategy.json')
-        # strategy_file = os.path.join(os.path.dirname(__file__), 'config/simple_strategy.json')
+        # strategy_file = os.path.join(os.path.dirname(__file__), 'config/scalping_strategy.json')
+        strategy_file = os.path.join(os.path.dirname(__file__), 'config/simple_strategy.json')
         # strategy_file = os.path.join(os.path.dirname(__file__), 'config/breakout_strategy.json')
 
         with open(strategy_file, "r") as json_file:

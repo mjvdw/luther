@@ -22,7 +22,7 @@ def run(strategy):
 
     ws_connection = WebsocketConnection(strategy=strategy,
                                         handler=trade_logic,
-                                        enable_trace=False)
+                                        enable_trace=True)
     ws_connection.run()
 
     # TODO: Include any closing tidy up logic.
