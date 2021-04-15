@@ -2,6 +2,10 @@ import pandas as pd
 
 from .strategy import Strategy
 from ..position import Position
+from ..user import User
+from ..phemex import Phemex
+from ..phemex import PhemexAPIException
+from ..signal import Signal
 
 
 class ScalpingStrategy(Strategy):
@@ -49,7 +53,7 @@ class ScalpingStrategy(Strategy):
 
         return signals
 
-    def check_exit_conditions(self, data: pd.DataFrame = None, position: Position = None) -> list:
+    def check_exit_conditions(self, data: pd.DataFrame, position: Position) -> list:
         """
         As this is a scalping strategy, this should always return True straight away. For consistency with other
         strategies, return a list of boolean values.
@@ -61,11 +65,48 @@ class ScalpingStrategy(Strategy):
         condition = self.conditions["exit"]
         signals = []
 
+        client = User.connect()
+        exit_distance = self._get_current_exit_distance(client, data)
+
+        if exit_distance > (2 * super().order_exit_params["limit_margin_ep"]):
+            client.cancel_all(super().symbol)
+            action = Signal.EXIT
+        else:
+            action = Signal.WAIT
+
         signal = {
-            "action": condition["action"],
+            "action": action,
             "confidence": 1,
             "strategy_type": self.strategy_type
         }
         signals.append(signal)
 
         return signals
+
+    def _get_current_exit_distance(self, client: Phemex, data: pd.DataFrame):
+        """
+
+        :param client:
+        :param data:
+        :return: An integer representing the EP scaled value of the distance between the current price and the price
+        at which the relevant order was entered.
+        """
+
+        orders = []
+        current_price = data["closeEp"].tail(1).values[0]
+
+        try:
+            unfilled_orders = client.query_open_orders(super().symbol)["data"]["rows"]
+            for unfilled_order in unfilled_orders:
+                if unfilled_order["orderType"] == "Limit":
+                    orders.append(unfilled_order)
+
+            if len(orders) == 1:
+                distance = abs(orders[0]["priceEp"] - current_price)
+            else:
+                distance = 0
+            exit_distance = distance
+        except PhemexAPIException as error:
+            exit_distance = 0
+
+        return exit_distance

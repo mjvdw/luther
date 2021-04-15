@@ -59,6 +59,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/core/classes/strategy/scalping_strategy.py">
+          <value>
+            <Attribute>
+              <option name="separator" value=":" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/core/classes/strategy/simple_strategy.py">
           <value>
             <Attribute>

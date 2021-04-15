@@ -7,7 +7,7 @@ from .classes.database import Database
 from .classes.signal import Signal
 from core.classes.strategy.strategy import Strategy
 from .classes.user import User
-from .classes.order import Order
+from core.classes.order.new_order import NewOrder
 from .classes.slack import Slack
 
 
@@ -49,10 +49,9 @@ def trade_logic(strategy: Strategy) -> None:
 
         if signal.action != Signal.WAIT and not user.is_unfilled_orders:
             Slack().send(f"Signal received: {signal.action}, with confidence {signal.confidence}")
-            order = Order(data=market_data, signal=signal, strategy=strategy)
+            order = NewOrder(data=market_data, signal=signal, strategy=strategy)
             order.send()
         elif signal.action == Signal.WAIT and user.is_unfilled_orders and not user.is_open_positions:
-            print(signal.action)
             Slack().send("Cancelling order.")
             client = user.connect()
             client.cancel_all(strategy.symbol)

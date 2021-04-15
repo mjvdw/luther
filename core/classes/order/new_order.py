@@ -2,13 +2,13 @@ import pandas as pd
 import uuid
 
 from core.classes.strategy.strategy import Strategy
-from .signal import Signal
-from .user import User
-from .phemex import Phemex
-from .slack import Slack
+from core.classes.signal import Signal
+from core.classes.user import User
+from core.classes.phemex import Phemex
+from core.classes.slack import Slack
 
 
-class Order(object):
+class NewOrder(object):
     def __init__(self, data: pd.DataFrame, signal: Signal, strategy: Strategy):
         """
         An object representing a trade order to be sent to the Phemex API. Use to generate trade parameters in the
@@ -69,7 +69,7 @@ class Order(object):
         side_multiplier = -1 if side == "Sell" else 1  # Utility variable to convert parameters between longs/shorts.
 
         # Convert to int because type returned by DataFrame is not JSON Serializable.
-        current_price = int(self.data["closeEp"].tail(1).values[0])
+        current_price = float(self.data["closeEp"].tail(1).values[0])
 
         # If order type is Market, the price is irrelevant, so calculate on the assumption it will be a Limit order.
         price = current_price - (side_multiplier * self.strategy.order_entry_params["limit_margin_ep"])

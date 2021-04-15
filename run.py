@@ -34,4 +34,4 @@ if __name__ == "__main__":
             Slack().send(f"Starting {strategy_type} strategy...")
             run(strategy)  # Use strategy object to execute trading strategy.
     except Exception as e:
-        Slack().send(f"Error: {e}")
+        Slack().send(f"<!channel> Error: {e}")

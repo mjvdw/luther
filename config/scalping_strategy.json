@@ -80,9 +80,10 @@
         "action": "ENTER_LONG",
         "confidence": 5,
         "params": [
+          ["EMA_50", "EMA_100", ">"],
           ["STOCHk_5_3_3", "STOCHd_5_3_3", ">"],
-          ["STOCHk_5_3_3", 20, "<"],
-          ["STOCHd_5_3_3", 20, "<"],
+          ["STOCHk_5_3_3", 33, "<"],
+          ["STOCHd_5_3_3", 33, "<"],
           ["RSI_6", 50, "<"],
           ["STDEV_6", 500000, "<"]
         ]
@@ -92,9 +93,10 @@
         "action": "ENTER_LONG",
         "confidence": 2,
         "params": [
+          ["EMA_50", "EMA_100", ">"],
           ["STOCHk_5_3_3", "STOCHd_5_3_3", ">"],
-          ["STOCHk_5_3_3", 20, "<"],
-          ["STOCHd_5_3_3", 20, "<"]
+          ["STOCHk_5_3_3", 50, "<"],
+          ["STOCHd_5_3_3", 50, "<"]
         ]
       },
       {
@@ -115,9 +117,10 @@
         "action": "ENTER_SHORT",
         "confidence": 5,
         "params": [
+          ["EMA_50", "EMA_100", "<"],
           ["STOCHk_5_3_3", "STOCHd_5_3_3", "<"],
-          ["STOCHk_5_3_3", 80, ">"],
-          ["STOCHd_5_3_3", 80, ">"],
+          ["STOCHk_5_3_3", 67, ">"],
+          ["STOCHd_5_3_3", 67, ">"],
           ["RSI_6", 50, ">"],
           ["STDEV_6", 500000, "<"]
         ]
@@ -127,9 +130,10 @@
         "action": "ENTER_SHORT",
         "confidence": 2,
         "params": [
+          ["EMA_50", "EMA_100", "<"],
           ["STOCHk_5_3_3", "STOCHd_5_3_3", "<"],
-          ["STOCHk_5_3_3", 80, ">"],
-          ["STOCHd_5_3_3", 80, ">"],
+          ["STOCHk_5_3_3", 50, ">"],
+          ["STOCHd_5_3_3", 50, ">"],
           ["RSI_6", 50, ">"]
         ]
       }
