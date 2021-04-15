@@ -9,7 +9,7 @@ from core.classes.slack import Slack
 
 
 class NewOrder(object):
-    def __init__(self, data: pd.DataFrame, signal: Signal, strategy: Strategy):
+    def __init__(self, data: pd.DataFrame, signal: Signal, strategy: Strategy, user: User):
         """
         An object representing a trade order to be sent to the Phemex API. Use to generate trade parameters in the
         format required by the Phemex API, by process the user-provided strategy.
@@ -20,6 +20,7 @@ class NewOrder(object):
         self.data = data
         self.signal = signal
         self.strategy = strategy
+        self.user = user
 
         self._order_params = None
         self._generate_order_parameters()

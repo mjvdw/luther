@@ -144,7 +144,7 @@ class Signal(object):
         elif valid_conditions_format and is_open_positions:
             # Evaluate exit conditions, OR if exit order has been placed, but unfilled, checking whether it should move
             # to match large price movements.
-            signals = self.strategy.check_exit_conditions(data=self.data, position=self.user.open_position)
+            signals = self.strategy.check_exit_conditions(data=self.data, user=self.user)
         else:
             signals = None
 

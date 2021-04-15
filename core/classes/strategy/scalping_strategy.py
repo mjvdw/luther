@@ -1,7 +1,6 @@
 import pandas as pd
 
 from .strategy import Strategy
-from ..position import Position
 from ..user import User
 from ..phemex import Phemex
 from ..phemex import PhemexAPIException
@@ -54,13 +53,13 @@ class ScalpingStrategy(Strategy):
 
         return signals
 
-    def check_exit_conditions(self, data: pd.DataFrame, position: Position) -> list:
+    def check_exit_conditions(self, data: pd.DataFrame, user: User) -> list:
         """
         As this is a scalping strategy, this should always return True straight away. For consistency with other
         strategies, return a list of boolean values.
 
         :param data: Market data.
-        :param position: The current open position as a Position object.
+        :param user: The current open position as a Position object.
         :return: A list containing the exit signal if applicable.
         """
 
@@ -68,13 +67,21 @@ class ScalpingStrategy(Strategy):
         condition = self.conditions["exit"]
         signals = []
 
+        position = user.open_position
+
         client = User.connect()
         exit_distance = self._get_current_exit_distance(client, data)
 
-        if exit_distance > (2 * super().order_exit_params["limit_margin_ep"]):
-            client.cancel_all(super().symbol)
+        print(f"Exit distance: {exit_distance}")
+
+        if exit_distance > (2 * super().order_exit_params["limit_margin_ep"]) and exit_distance != 0:
+            print(f"Distance threshold: {exit_distance}.")
+            client.cancel_all_normal_orders(super().symbol)
+            action = Signal.EXIT
+        elif user.is_open_positions and not user.is_unfilled_orders:
             action = Signal.EXIT
         else:
+            print("Still in proximity, waiting.")
             action = Signal.WAIT
 
         signal = {

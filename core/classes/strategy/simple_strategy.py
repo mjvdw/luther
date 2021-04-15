@@ -1,7 +1,7 @@
 import pandas as pd
 
 from .strategy import Strategy
-from ..position import Position
+from ..user import User
 
 
 class SimpleStrategy(Strategy):
@@ -49,18 +49,20 @@ class SimpleStrategy(Strategy):
 
         return signals
 
-    def check_exit_conditions(self, data: pd.DataFrame, position: Position) -> list:
+    def check_exit_conditions(self, data: pd.DataFrame, user: User) -> list:
         """
         Iterate through each condition as provided by the user and check whether the current market data meets all of
         those condition.
 
         :param data: Market data.
-        :param position: The current open position as a Position object.
+        :param user: The current open position as a Position object.
         :return: A list containing the exit signal if applicable.
         """
         condition = self.conditions["exit"]
         signals = []
         results = []
+
+        position = user.open_position
 
         if position.net_pnl >= condition["take_profit"] or position.net_pnl <= condition["stop_loss"]:
             results.append(True)

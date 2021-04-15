@@ -93,10 +93,10 @@
         "action": "ENTER_LONG",
         "confidence": 2,
         "params": [
-          ["EMA_50", "EMA_100", ">"],
           ["STOCHk_5_3_3", "STOCHd_5_3_3", ">"],
           ["STOCHk_5_3_3", 50, "<"],
           ["STOCHd_5_3_3", 50, "<"]
+          ["RSI_6", 50, "<"]
         ]
       },
       {
@@ -130,7 +130,6 @@
         "action": "ENTER_SHORT",
         "confidence": 2,
         "params": [
-          ["EMA_50", "EMA_100", "<"],
           ["STOCHk_5_3_3", "STOCHd_5_3_3", "<"],
           ["STOCHk_5_3_3", 50, ">"],
           ["STOCHd_5_3_3", 50, ">"],

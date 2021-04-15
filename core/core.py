@@ -50,7 +50,7 @@ def trade_logic(strategy: Strategy) -> None:
 
         if signal.action != Signal.WAIT and not user.is_unfilled_orders:
             Slack().send(f"Signal received: {signal.action}, with confidence {signal.confidence}")
-            order = NewOrder(data=market_data, signal=signal, strategy=strategy)
+            order = NewOrder(data=market_data, signal=signal, strategy=strategy, user=user)
             order.send()
         elif signal.action == Signal.WAIT and user.is_unfilled_orders and not user.is_open_positions:
             current_time = time.time()
@@ -60,4 +60,4 @@ def trade_logic(strategy: Strategy) -> None:
             if time_since_order > strategy.entry_patience:
                 Slack().send(f"Waited {int(time_since_order)} seconds. Cancelling order.")
                 client = user.connect()
-                client.cancel_all(strategy.symbol)
+                client.cancel_all_normal_orders(strategy.symbol)
