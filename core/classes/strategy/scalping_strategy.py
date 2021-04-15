@@ -29,6 +29,7 @@ class ScalpingStrategy(Strategy):
         """
         signals = []
 
+        print("Checking entry conditions.")
         for condition in self.conditions["enter"]:
             # Test each set of conditions.
             params = condition["params"]
@@ -62,6 +63,8 @@ class ScalpingStrategy(Strategy):
         :param position: The current open position as a Position object.
         :return: A list containing the exit signal if applicable.
         """
+
+        print("Checking exit conditions.")
         condition = self.conditions["exit"]
         signals = []
 

@@ -5,6 +5,7 @@ from .phemex import Phemex
 from .phemex import PhemexAPIException
 from core.classes.strategy.strategy import Strategy
 from .position import Position
+from .order.unfilled_order import UnfilledOrder
 
 
 class User(object):
@@ -46,6 +47,22 @@ class User(object):
             position = positions[0]
 
         return position
+
+    @property
+    def unfilled_order(self) -> Optional[UnfilledOrder]:
+        client = User.connect()
+        orders = client.query_open_orders(self.strategy.symbol)["data"]["rows"]
+
+        unfilled_orders = []
+        for order in orders:
+            unfilled_orders.append(UnfilledOrder(order))
+
+        if len(unfilled_orders) > 1:
+            raise IndexError("Too many orders received from API.")
+        else:
+            unfilled_order = unfilled_orders[0]
+
+        return unfilled_order
 
     @property
     def wallet_balance(self) -> float:

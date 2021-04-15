@@ -102,3 +102,8 @@ class Strategy(object):
         """
         order_exit_params = self.params["order_params"]["exit"]
         return order_exit_params
+
+    @property
+    def entry_patience(self) -> int:
+        entry_patience = self.params["order_params"]["entry"]["entry_patience"]
+        return entry_patience

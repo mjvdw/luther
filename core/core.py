@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import pandas as pd
+import time
 
 from .classes.websocketconnection import WebsocketConnection
 from .classes.database import Database
@@ -45,13 +46,18 @@ def trade_logic(strategy: Strategy) -> None:
         user = User(strategy)
         signal = Signal(data=market_data, strategy=strategy, user=user)
 
-        # print(signal.signal)
+        print(signal.signal)
 
         if signal.action != Signal.WAIT and not user.is_unfilled_orders:
             Slack().send(f"Signal received: {signal.action}, with confidence {signal.confidence}")
             order = NewOrder(data=market_data, signal=signal, strategy=strategy)
             order.send()
         elif signal.action == Signal.WAIT and user.is_unfilled_orders and not user.is_open_positions:
-            Slack().send("Cancelling order.")
-            client = user.connect()
-            client.cancel_all(strategy.symbol)
+            current_time = time.time()
+            last_order_time = user.unfilled_order.action_time/1000000000  # Convert from nanoseconds to seconds.
+            time_since_order = current_time - last_order_time
+
+            if time_since_order > strategy.entry_patience:
+                Slack().send(f"Waited {int(time_since_order)} seconds. Cancelling order.")
+                client = user.connect()
+                client.cancel_all(strategy.symbol)

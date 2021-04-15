@@ -151,7 +151,8 @@
       "limit_margin_ep": 5000,
       "wallet_ratio": 0.1,
       "safety_tp": 0.05,
-      "safety_sl": 0.02
+      "safety_sl": 0.02,
+      "entry_patience": 60
     },
     "exit": {
       "ord_type": "Limit",

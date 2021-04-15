@@ -136,13 +136,12 @@ class Signal(object):
 
         is_open_positions = self.user.is_open_positions
         is_unfilled_orders = self.user.is_unfilled_orders
-        is_trading = self.user.is_trading  # is_trading is a combination or is_open_positions and is_unfilled_orders.
+        is_trading = self.user.is_trading  # is_trading is a combination of (is_open_positions OR is_unfilled_orders).
 
         if valid_conditions_format and not is_trading:
             # Evaluate entry conditions.
             signals = self.strategy.check_entry_conditions(data=self.data)
-        elif (valid_conditions_format and not is_unfilled_orders and is_open_positions) or \
-                (valid_conditions_format and is_unfilled_orders and is_open_positions):
+        elif valid_conditions_format and is_open_positions:
             # Evaluate exit conditions, OR if exit order has been placed, but unfilled, checking whether it should move
             # to match large price movements.
             signals = self.strategy.check_exit_conditions(data=self.data, position=self.user.open_position)
