@@ -119,7 +119,7 @@
       "entry_patience": 60
     },
     "exit": {
-      "ord_type": "Limit",
+      "ord_type": "Market",
       "limit_margin_ep": 5000
     }
   }

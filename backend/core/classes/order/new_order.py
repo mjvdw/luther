@@ -39,7 +39,7 @@ class NewOrder(object):
 
         # Send order parameters via Phemex API.
         r = client.place_order(self._order_params)
-        Slack().send(f"Order response: {r}")
+        # Slack().send(f"Order response: {r}")
 
         # TODO: Save phemex response to CSV for future reference.
 
