@@ -63,32 +63,34 @@
   "conditions": {
     "enter": [
       {
-        "id": 3,
+        "id": 1,
         "action": "ENTER_LONG",
         "confidence": 1,
         "params": [
           ["STOCHk_5_3_3", "STOCHd_5_3_3", ">"],
           ["STOCHk_5_3_3", 20, "<"],
           ["STOCHd_5_3_3", 20, "<"],
-          ["RSI_6", 50, "<"]
+          ["RSI_6", 50, "<"],
+          ["closeEp", "EMA_50", ">"]
         ]
       },
       {
-        "id": 6,
+        "id": 2,
         "action": "ENTER_SHORT",
         "confidence": 1,
         "params": [
           ["STOCHk_5_3_3", "STOCHd_5_3_3", "<"],
           ["STOCHk_5_3_3", 80, ">"],
           ["STOCHd_5_3_3", 80, ">"],
-          ["RSI_6", 50, ">"]
+          ["RSI_6", 50, ">"],
+          ["closeEp", "EMA_50", "<"]
         ]
       }
     ],
     "exit": {
       "action": "EXIT",
-      "stop_loss": -0.005,
-      "take_profit": 0.01,
+      "stop_loss": -0.01,
+      "take_profit": 0.0025,
       "scalp_margin_ep": 5000,
       "indicators": [
         {
@@ -113,8 +115,8 @@
     "entry": {
       "ord_type": "Limit",
       "limit_margin_ep": 5000,
-      "wallet_ratio": 0.1,
-      "safety_tp": 0.05,
+      "wallet_ratio": 0.05,
+      "safety_tp": 0.01,
       "safety_sl": 0.02,
       "entry_patience": 60
     },
