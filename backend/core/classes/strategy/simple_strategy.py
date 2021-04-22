@@ -68,15 +68,15 @@ class SimpleStrategy(Strategy):
             results.append(True)
         else:
             for indicator in condition["indicators"]:
-                key = indicator["key"]
-                value = data[key].tail(1).values[0]
+                # Test each parameter within one set of conditions.
+                side_key = "long_exit_limit" if position.side == "Buy" else "short_exit_limit"
+                param = indicator[side_key]
 
-                short_limit = indicator["short_exit_limit"]
-                long_limit = indicator["long_exit_limit"]
-                limit = short_limit if position.side == "Sell" else long_limit
+                left = data[param[0]].tail(1).values[0] if type(param[0]) == str else param[0]
+                right = data[param[1]].tail(1).values[0] if type(param[1]) == str else param[1]
+                compare_operator = param[2]
 
-                condition_str = str(value) + str(limit[1]) + str(limit[0])
-                print(condition_str, eval(condition_str))
+                condition_str = str(left) + str(compare_operator) + str(right)
                 if eval(condition_str):
                     results.append(True)
 

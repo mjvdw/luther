@@ -94,19 +94,16 @@
       "scalp_margin_ep": 5000,
       "indicators": [
         {
-          "key": "RSI_6",
-          "short_exit_limit": [33, "<"],
-          "long_exit_limit": [67, ">"]
+          "short_exit_limit": ["RSI_6", 33, "<"],
+          "long_exit_limit": ["RSI_6", 67, ">"]
         },
         {
-          "key": "STOCHk_5_3_3",
-          "short_exit_limit": [20, "<"],
-          "long_exit_limit": [80, ">"]
+          "short_exit_limit": ["STOCHk_5_3_3", 20, "<"],
+          "long_exit_limit": ["STOCHk_5_3_3", 80, ">"]
         },
         {
-          "key": "STOCHd_5_3_3",
-          "short_exit_limit": [20, "<"],
-          "long_exit_limit": [80, ">"]
+          "short_exit_limit": ["STOCHd_5_3_3", 20, "<"],
+          "long_exit_limit": ["STOCHd_5_3_3", 80, ">"]
         }
       ]
     }

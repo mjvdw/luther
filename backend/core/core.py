@@ -51,7 +51,7 @@ def trade_logic(strategy: Strategy) -> None:
         if signal.action != Signal.WAIT and not user.is_unfilled_orders:
             # Slack().send(f"Signal received: {signal.action}, with confidence {signal.confidence}")
             order = NewOrder(data=market_data, signal=signal, strategy=strategy, user=user)
-            # order.send()
+            order.send()
         elif signal.action == Signal.WAIT and user.is_unfilled_orders and not user.is_open_positions:
             current_time = time.time()
             last_order_time = user.unfilled_order.action_time/1000000000  # Convert from nanoseconds to seconds.

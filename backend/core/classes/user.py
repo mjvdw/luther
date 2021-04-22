@@ -10,7 +10,7 @@ from .order.unfilled_order import UnfilledOrder
 
 class User(object):
 
-    TEST_NET: bool = False
+    TEST_NET: bool = True
 
     def __init__(self, strategy: Strategy):
         """
