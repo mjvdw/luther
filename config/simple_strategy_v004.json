@@ -1,0 +1,126 @@
+{
+  "type": "SIMPLE",
+  "currency": "BTC",
+  "symbol": "BTCUSD",
+  "klines": {
+    "period": 60,
+    "symbol": "BTCUSD"
+  },
+  "indicators": [
+    {
+      "name": "Exponential Moving Average",
+      "ta_kind": "ema",
+      "key": "EMA_50",
+      "params": {
+        "length": 50
+      }
+    },
+    {
+      "name": "Exponential Moving Average",
+      "ta_kind": "ema",
+      "key": "EMA_100",
+      "params": {
+        "length": 100
+      }
+    },
+    {
+      "name": "Stochastic Oscillator",
+      "ta_kind": "stoch",
+      "key": "STOCHk_5_3_3",
+      "params": {
+        "k": 5,
+        "d": 3,
+        "smooth_k": 3
+      }
+    },
+    {
+      "name": "Stochastic Oscillator",
+      "ta_kind": "stoch",
+      "key": "STOCHd_5_3_3",
+      "params": {
+        "k": 5,
+        "d": 3,
+        "smooth_k": 3
+      }
+    },
+    {
+      "name": "Relative Strength Index",
+      "ta_kind": "rsi",
+      "key": "RSI_6",
+      "params": {
+        "length": 6
+      }
+    },
+    {
+      "name": "Standard Deviation",
+      "ta_kind": "stdev",
+      "key": "STDEV_6",
+      "params": {
+        "length": 6
+      }
+    }
+  ],
+  "conditions": {
+    "enter": [
+      {
+        "id": 1,
+        "action": "ENTER_LONG",
+        "confidence": 1,
+        "params": [
+          ["STOCHk_5_3_3", "STOCHd_5_3_3", ">"],
+          ["STOCHk_5_3_3", 20, "<"],
+          ["STOCHd_5_3_3", 20, "<"],
+          ["RSI_6", 50, "<"],
+          ["closeEp", "EMA_50", ">"]
+        ]
+      },
+      {
+        "id": 2,
+        "action": "ENTER_SHORT",
+        "confidence": 1,
+        "params": [
+          ["STOCHk_5_3_3", "STOCHd_5_3_3", "<"],
+          ["STOCHk_5_3_3", 80, ">"],
+          ["STOCHd_5_3_3", 80, ">"],
+          ["RSI_6", 50, ">"],
+          ["closeEp", "EMA_50", "<"]
+        ]
+      }
+    ],
+    "exit": {
+      "action": "EXIT",
+      "stop_loss": -0.01,
+      "take_profit": 0.0025,
+      "scalp_margin_ep": 5000,
+      "indicators": [
+        {
+          "short_exit_limit": ["RSI_6", 33, "<"],
+          "long_exit_limit": ["RSI_6", 67, ">"]
+        },
+        {
+          "short_exit_limit": ["STOCHd_5_3_3", 20, "<"],
+          "long_exit_limit": ["STOCHk_5_3_3", 80, ">"]
+        },
+        {
+          "short_exit_limit": ["closeEp", "EMA_50", ">"],
+          "long_exit_limit": ["closeEp", "EMA_50", "<"]
+        }
+      ]
+    }
+  },
+  "order_params": {
+    "entry": {
+      "ord_type": "Limit",
+      "limit_margin_ep": 5000,
+      "wallet_ratio": 0.05,
+      "safety_tp": 0.003,
+      "safety_sl": 0.005,
+      "entry_patience": 60
+    },
+    "exit": {
+      "ord_type": "Limit",
+      "limit_margin_ep": 5000,
+      "auto_take_profit": 0.0025
+    }
+  }
+}

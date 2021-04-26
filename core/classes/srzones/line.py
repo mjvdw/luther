@@ -15,11 +15,16 @@ class Line(object):
 
     @slope.setter
     def slope(self, slope):
+        self._recalculate_intercept(slope)
         self._slope = slope
 
     @property
     def intercept(self) -> int:
         return self._intercept
+
+    @intercept.setter
+    def intercept(self, intercept):
+        self._intercept = intercept
 
     @staticmethod
     def _get_line_slope_from_coords(coords: [tuple]) -> int:
@@ -46,6 +51,7 @@ class Line(object):
     def _get_line_intercept_from_coords(coords: [tuple], slope: int) -> int:
         """
         Get the "y" value at the point where the line intercepts the y-axis.
+        Note that the point where the line intercepts will be where x is the first timestamp available in the data.
         :param coords: Two coordinates representing the line.
         :param slope: Slope of the line is required to calculate intercept.
         :return: An integer representing the y-axis value of the line where the line intercept the y-axis
@@ -57,10 +63,52 @@ class Line(object):
 
         return intercept
 
-    def recalculate_intercept(self, slope: int):
+    def _recalculate_intercept(self, slope: int):
         """
         If the slope is changed, this will recalculate the y-intercept based on that new slope value.
         :param slope: The new slope value.
         :return: The recalculated y-intercept.
         """
         self._intercept = self._get_line_intercept_from_coords(coords=self.coords, slope=slope)
+
+    def value_is_above_line(self, value: float, timestamp: int) -> bool:
+        """
+        Test whether a given value is above the line.
+        :param timestamp: The timestamp at which the given value occurred.
+        :param value: The value to test against the line.
+        :return: A boolean, true if value is above the line, false if it is on or below the line.
+        """
+        # y = mx + c
+        line_value = (self.slope * timestamp) + self.intercept
+        if line_value < value:
+            return True
+        else:
+            return False
+
+    def value_is_below_line(self, value: float, timestamp: int) -> bool:
+        """
+        Test whether a given value is below the line.
+        :param value: The value to test against the line.
+        :param timestamp: The timestamp at which the given value occurred.
+        :return: A boolean, true if value is below the line, false if it is on or above the line.
+        """
+        # y = mx + c
+        line_value = (self.slope * timestamp) + self.intercept
+        if line_value > value:
+            return True
+        else:
+            return False
+
+    def value_is_on_line(self, value: float, timestamp: int) -> bool:
+        """
+        Test whether a given value is on the line.
+        :param value: The value to test against the line.
+        :param timestamp: The timestamp at which the given value occurred.
+        :return: A boolean, true if value is on the line, false if it is above or below the line.
+        """
+        # y = mx + c
+        line_value = (self.slope * timestamp) + self.intercept
+        if line_value == value:
+            return True
+        else:
+            return False

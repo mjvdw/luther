@@ -12,12 +12,31 @@ class Zone(object):
         self.line = line
         self.width = width
 
-    def is_value_in_zone(self, value) -> bool:
+    @property
+    def upper_boundary_line(self):
+        upper_boundary_line = self.line
+        upper_boundary_line.intercept += self.width / 2
+        return upper_boundary_line
 
-        return False
+    @property
+    def lower_boundary_line(self):
+        lower_boundary_line = self.line
+        lower_boundary_line.intercept -= self.width / 2
+        return lower_boundary_line
 
-    def is_value_above_zone(self, value) -> bool:
-        return False
+    def value_is_in_zone(self, value: float) -> bool:
+        is_below_upper_line = self.upper_boundary_line.value_is_below_line(value)
+        is_above_lower_line = self.lower_boundary_line.value_is_above_line(value)
 
-    def is_value_below_zone(self, value) -> bool:
-        return False
+        if is_below_upper_line and is_above_lower_line:
+            return True
+        else:
+            return False
+
+    def value_is_above_zone(self, value: float) -> bool:
+        is_above_upper_line = self.upper_boundary_line.value_is_above_line(value)
+        return is_above_upper_line
+
+    def value_is_below_zone(self, value: float) -> bool:
+        is_below_lower_line = self.lower_boundary_line.value_is_below_line(value)
+        return is_below_lower_line
