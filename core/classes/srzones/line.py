@@ -26,6 +26,16 @@ class Line(object):
     def intercept(self, intercept):
         self._intercept = intercept
 
+    def get_value_for_timestamp(self, timestamp: int):
+        """
+        Calculate the y-axis value based on a timestamp received as an argument.
+        :param timestamp: the timestamp for the corresponding y-axis value.
+        :return: The value.
+        """
+        # y = mx + c
+        value = (self.slope * timestamp) + self.intercept
+        return value
+
     @staticmethod
     def _get_line_slope_from_coords(coords: [tuple]) -> int:
         """

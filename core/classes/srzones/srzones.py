@@ -119,3 +119,21 @@ class SRZones(object):
         zone = Zone(line=line, width=self.width)
 
         return zone
+
+    @property
+    def last_minima_timestamp(self):
+        """
+        Helper function to get the timestamp for the most recent minima.
+        :return: the timestamp for the most recent minima.
+        """
+        last_minima_timestamp = self._get_extrema_coords()["valleys"][-1][0]
+        return last_minima_timestamp
+
+    @property
+    def last_maxima_timestamp(self):
+        """
+        Helper function to get the timestamp fot the most recent maxima.
+        :return: the timestamp for the most recent maxima.
+        """
+        last_maxima_timestamp = self._get_extrema_coords()["peaks"][-1][0]
+        return last_maxima_timestamp
