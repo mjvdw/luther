@@ -14,13 +14,13 @@ class Zone(object):
 
     @property
     def upper_boundary_line(self):
-        upper_boundary_line = self.line
+        upper_boundary_line = Line(self.line.coords)
         upper_boundary_line.intercept += self.width / 2
         return upper_boundary_line
 
     @property
     def lower_boundary_line(self):
-        lower_boundary_line = self.line
+        lower_boundary_line = Line(self.line.coords)
         lower_boundary_line.intercept -= self.width / 2
         return lower_boundary_line
 

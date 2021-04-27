@@ -10,8 +10,8 @@ class SRZones(object):
     def __init__(self,
                  market_data: pd.DataFrame,
                  width: int,
-                 max_periods: int = 1000,
-                 extrema_order: int = 10,
+                 max_periods: int = 300,
+                 extrema_order: int = 20,
                  max_slope: int = 4
                  ):
         """
@@ -47,36 +47,42 @@ class SRZones(object):
         resistance_zone = self._get_zone_from_coords(coords=self._get_extrema_coords()["peaks"])
         return resistance_zone
 
-    def value_is_between_sr_zones(self, value: float) -> bool:
+    @staticmethod
+    def value_is_between_sr_zones(support: Zone, resistance: Zone, value: float, timestamp: int) -> bool:
         """
         Check whether a given value is between the support and resistance zones.
+        :param support: Zone object representing the support zone.
+        :param resistance: Zone object representing the resistance zone.
         :param value: the value to check.
+        :param timestamp: the timestamp related to the value.
         :return: A boolean indicating whether value is between zones.
         """
-        is_above_support = self.support_zone.value_is_above_zone(value)
-        is_below_resistance = self.resistance_zone.value_is_below_zone(value)
+        is_above_support = support.lower_boundary_line.value_is_above_line(value, timestamp)
+        is_below_resistance = resistance.upper_boundary_line.value_is_below_line(value, timestamp)
 
         if is_above_support and is_below_resistance:
             return True
         else:
             return False
 
-    def value_is_below_support(self, value: float) -> bool:
+    def value_is_below_support(self, value: float, timestamp: int) -> bool:
         """
         Check whether a given value is below the support level (indicating a breakout downwards).
         :param value: the value to check.
+        :param timestamp: the timestamp at which the value occurs.
         :return: A boolean indicating whether the value is below the support zone.
         """
-        is_below_support = self.support_zone.value_is_below_zone(value)
+        is_below_support = self.support_zone.value_is_below_zone(value, timestamp)
         return is_below_support
 
-    def value_is_above_resistance(self, value: float) -> bool:
+    def value_is_above_resistance(self, value: float, timestamp: int) -> bool:
         """
         Check whether a given value is above the resistance level (indicating a breakout upwards).
         :param value: the value to check.
+        :param timestamp: the timestamp at which the value occurs.
         :return: A boolean indicating whether the value is above the resistance zone.
         """
-        is_above_resistance = self.support_zone.value_is_below_zone(value)
+        is_above_resistance = self.support_zone.value_is_above_zone(value, timestamp)
         return is_above_resistance
 
     def _get_extrema_coords(self) -> dict:

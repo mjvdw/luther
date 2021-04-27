@@ -8,8 +8,9 @@ from core.classes.srzones.srzones import SRZones
 
 from core.classes.database import Database
 
-MAX_DATA = 500
-EXTREMA_ORDER = 19
+MAX_DATA = 100
+WIDTH = 50
+EXTREMA_ORDER = 10
 MAX_SLOPE = 4 * Phemex.SCALE_EP_BTCUSD
 
 """
@@ -95,6 +96,8 @@ def attempt_three(df):
     support_line, support_slope = get_slope_line_coords(support)
     resistance_line, resistance_slope = get_slope_line_coords(resistance)
 
+    print(support_line, resistance_line)
+
     plt.plot(support_line[0], support_line[1], color="r", lw=15, alpha=0.2)
     plt.plot(support_line[0], support_line[1], color="r")
     plt.plot(resistance_line[0], resistance_line[1], color="g", lw=15, alpha=0.2)
@@ -119,11 +122,6 @@ def attempt_three(df):
 
     sr_lines_converge = get_convergence_point(support_line, support_slope, resistance_line, resistance_slope)
 
-    if sr_lines_converge:
-        print("Converges")
-    else:
-        print("Diverges")
-
 
     # TODO: Once zones are drawn, wait for confirmation of those zones when another peak/valley hits. There must be at
     #  least two (if horizontal) or three (if sloped) peaks/valleys in each zone to confirm the zone.
@@ -144,12 +142,9 @@ def attempt_three(df):
 if __name__ == "__main__":
     market_data = pd.read_csv(Database.MARKET_DATA_PATH, index_col=0)
 
-    width = 100  # Width in BTC
+    width = WIDTH  # Width in BTC
     sr_zones = SRZones(market_data=market_data, width=width)
     support = sr_zones.support_zone
     resistance = sr_zones.resistance_zone
 
-    print(support.line.intercept, support.width)
-    print(resistance.line.intercept, resistance.width)
-
-    # attempt_three(market_data.tail(MAX_DATA))
+    attempt_three(market_data.tail(MAX_DATA))

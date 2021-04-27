@@ -1,10 +1,10 @@
 import pandas as pd
 
-from .strategy import Strategy
-from ..phemex import Phemex
-from ..phemex import PhemexAPIException
-from ..signal import Signal
-from ..user import User
+from core.classes.strategy.strategy import Strategy
+from core.classes.phemex import Phemex
+from core.classes.phemex import PhemexAPIException
+from core.classes.signal import Signal
+from core.classes.user import User
 
 
 class ScalpingStrategy(Strategy):
@@ -28,7 +28,6 @@ class ScalpingStrategy(Strategy):
         """
         signals = []
 
-        print("Checking entry conditions.")
         for condition in self.conditions["enter"]:
             # Test each set of conditions.
             params = condition["params"]
@@ -63,7 +62,6 @@ class ScalpingStrategy(Strategy):
         :return: A list containing the exit signal if applicable.
         """
 
-        print("Checking exit conditions.")
         condition = self.conditions["exit"]
         signals = []
 
@@ -72,16 +70,12 @@ class ScalpingStrategy(Strategy):
         client = User.connect()
         exit_distance = self._get_current_exit_distance(client, data)
 
-        print(f"Exit distance: {exit_distance}")
-
         if exit_distance > (2 * super().order_exit_params["limit_margin_ep"]) and exit_distance != 0:
-            print(f"Distance threshold: {exit_distance}.")
             client.cancel_all_normal_orders(super().symbol)
             action = Signal.EXIT
         elif user.is_open_positions and not user.is_unfilled_orders:
             action = Signal.EXIT
         else:
-            print("Still in proximity, waiting.")
             action = Signal.WAIT
 
         signal = {
