@@ -11,8 +11,8 @@ class SRZones(object):
                  market_data: pd.DataFrame,
                  width: int,
                  max_periods: int = 300,
-                 extrema_order: int = 20,
-                 max_slope: int = 4
+                 extrema_order: int = 30,
+                 max_slope: int = 8
                  ):
         """
         Generates support and resistance line, saves them, and provides functions to interact with those lines.
@@ -92,7 +92,7 @@ class SRZones(object):
         valleys).
         """
 
-        df = self.market_data  # Do not manipulate original market_data.
+        df = pd.DataFrame(self.market_data)  # Do not manipulate original market_data.
 
         closes = df["closeEp"].values.tolist()
         indexes = df.index.tolist()
@@ -100,8 +100,8 @@ class SRZones(object):
         peak_indexes = argrelmax(np.array(closes), order=self.extrema_order)[0].tolist()
         valley_indexes = argrelmin(np.array(closes), order=self.extrema_order)[0].tolist()
 
-        peaks = [(indexes[index], closes[index-1]) for index in peak_indexes]
-        valleys = [(indexes[index], closes[index-1]) for index in valley_indexes]
+        peaks = [(indexes[index], closes[index]) for index in peak_indexes]
+        valleys = [(indexes[index], closes[index]) for index in valley_indexes]
 
         extrema_coords = {
             "peaks": peaks,

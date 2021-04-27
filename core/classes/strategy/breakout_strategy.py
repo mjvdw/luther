@@ -53,7 +53,17 @@ class BreakoutStrategy(Strategy):
             state.support = support
             state.resistance = resistance
 
+        if support.line.slope < resistance.line.slope:
+            # Indicating that the lines are diverging.
+            support.line.slope = 0
+            resistance.line.slope = 0
+
         self._plot_zones(data, support, resistance)
+
+        # TODO: Delete me!
+        from core.classes.phemex import Phemex
+        print(support.line.slope / Phemex.SCALE_EP_BTCUSD)
+        print(resistance.line.slope / Phemex.SCALE_EP_BTCUSD)
 
         ##
         # STEP 3: Once support and resistance lines are confirmed, check current price against zones.
@@ -161,21 +171,19 @@ class BreakoutStrategy(Strategy):
                 points_list.append((indexes[i], values[i]))
             return points_list
 
-        support = get_points_list(valley_indexes, valley_values)
-        resistance = get_points_list(peak_indexes, peak_values)
+        s = get_points_list(valley_indexes, valley_values)
+        r = get_points_list(peak_indexes, peak_values)
 
         ##
         # Iterate through the points to generate a line for the most recent support/resistance lines.
         # Must be at least two points in a row in order for there to be an eligible line.
         ##
-        def get_slope_line_coords(data_points):
+        def get_slope_line_coords(data_points, slope):
             if len(data_points) > 1:
                 x2 = data_points[-1][0]
                 y2 = data_points[-1][1]
                 x1 = data_points[-2][0]
                 y1 = data_points[-2][1]
-
-                slope = (y2 - y1) / (x2 - x1)
 
                 if abs(slope) < sr_zones.max_slope and not 0:
                     c = y1 - (slope * x1)
@@ -203,12 +211,12 @@ class BreakoutStrategy(Strategy):
 
             return slope_line_coords, slope
 
-        support_line, support_slope = get_slope_line_coords(support)
-        resistance_line, resistance_slope = get_slope_line_coords(resistance)
+        support_line, support_slope = get_slope_line_coords(s, support.line.slope)
+        resistance_line, resistance_slope = get_slope_line_coords(r, resistance.line.slope)
 
-        plt.plot(support_line[0], support_line[1], color="r", lw=15, alpha=0.2)
+        plt.plot(support_line[0], support_line[1], color="r", lw=5, alpha=0.2)
         plt.plot(support_line[0], support_line[1], color="r")
-        plt.plot(resistance_line[0], resistance_line[1], color="g", lw=15, alpha=0.2)
+        plt.plot(resistance_line[0], resistance_line[1], color="g", lw=5, alpha=0.2)
         plt.plot(resistance_line[0], resistance_line[1], color="g")
 
-        plt.savefig("fig.png")
+        plt.savefig("fig.png", dpi=150)
