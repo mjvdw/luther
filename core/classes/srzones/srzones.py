@@ -11,7 +11,7 @@ class SRZones(object):
                  market_data: pd.DataFrame,
                  width: int,
                  max_periods: int = 300,
-                 extrema_order: int = 30,
+                 extrema_order: int = 20,
                  max_slope: int = 8
                  ):
         """
@@ -95,7 +95,10 @@ class SRZones(object):
         df = pd.DataFrame(self.market_data)  # Do not manipulate original market_data.
 
         closes = df["closeEp"].values.tolist()
+        del closes[-5:]
+
         indexes = df.index.tolist()
+        del indexes[-5:]
 
         peak_indexes = argrelmax(np.array(closes), order=self.extrema_order)[0].tolist()
         valley_indexes = argrelmin(np.array(closes), order=self.extrema_order)[0].tolist()

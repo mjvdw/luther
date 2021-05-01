@@ -1,5 +1,4 @@
 import json
-import pandas as pd
 import inspect
 
 from core.classes.srzones.zone import Zone
@@ -14,7 +13,9 @@ class State(object):
         """
         self.new_state = {
             "support": None,
-            "resistance": None
+            "resistance": None,
+            "last_signal": None,
+            "existing_position": None
         }
 
         state_data = self._read_from_state_file()
@@ -81,6 +82,40 @@ class State(object):
         }
         self._set_property(value=new_value, key="resistance")
 
+    @property
+    def last_signal(self):
+        """
+
+        :return:
+        """
+        return self._read_from_state_file()["last_signal"]
+
+    @last_signal.setter
+    def last_signal(self, last_signal):
+        """
+    
+        :param last_signal: 
+        :return: 
+        """
+        self._set_property(value=last_signal, key="last_signal")
+
+    @property
+    def existing_position(self):
+        """
+
+        :return:
+        """
+        return self._read_from_state_file()["existing_position"]
+
+    @existing_position.setter
+    def existing_position(self, existing_position):
+        """
+
+        :param existing_position:
+        :return:
+        """
+        self._set_property(value=existing_position, key="existing_position")
+
     @staticmethod
     def _read_from_state_file():
         """
@@ -120,3 +155,11 @@ class State(object):
         state_data[key] = data
 
         cls._write_to_state_file(state_data)
+
+    @classmethod
+    def reset(cls):
+        """
+        Helper method for resetting the state file to its beginning state.
+        """
+        state = cls()
+        state._write_to_state_file(state.new_state)

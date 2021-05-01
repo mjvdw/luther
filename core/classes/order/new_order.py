@@ -25,7 +25,7 @@ class NewOrder(object):
         self.strategy = strategy
         self.user = user
 
-        self._order_params = None
+        self.order_params = None
         self._generate_order_parameters()
 
     def send(self):
@@ -41,10 +41,26 @@ class NewOrder(object):
             client.change_leverage(symbol=self.strategy.symbol, leverage=self.signal.confidence)
 
         # Send order parameters via Phemex API.
-        r = client.place_order(self._order_params)
+        r = client.place_order(self.order_params)
         # Slack().send(f"Order response: {r}")
 
         # TODO: Save phemex response to CSV for future reference.
+
+    @property
+    def entry_price_ep(self):
+        """
+        Scaled entry price for this order.
+        :return: Scaled entry price for this order.
+        """
+        return self.order_params["priceEp"]
+
+    @property
+    def entry_price(self):
+        """
+        Un-scaled entry price for this order.
+        :return: Un-scaled entry price for this order.
+        """
+        return self.entry_price_ep / Phemex.SCALE_EP_BTCUSD
 
     def _generate_order_parameters(self):
         """
@@ -59,7 +75,7 @@ class NewOrder(object):
         else:
             raise TypeError(f"Invalid signal sent: {self.signal.action}")
 
-        self._order_params = params
+        self.order_params = params
 
     def _generate_entry_parameters(self) -> dict:
         """

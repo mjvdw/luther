@@ -172,7 +172,8 @@ class Signal(object):
         :return: A boolean indicating whether the conditions file is valid.
         """
         try:
-            valid = bool(conditions["enter"][0]["params"][0][2])
+            # TODO: Put some action logic here to test whether conditions are valid.
+            valid = True
             return valid
         except KeyError:
             raise KeyError("Conditions not formatted correctly. A dictionary key is either missing or incorrect.")

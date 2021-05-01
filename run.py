@@ -30,6 +30,7 @@ if __name__ == "__main__":
             else:
                 raise TypeError(f"Invalid strategy type: {strategy_type}")
 
+            Slack().send("#####################################")
             Slack().send(f"Starting {strategy_type} strategy...")
             run(strategy)  # Use strategy object to execute trading strategy.
     except Exception as e:

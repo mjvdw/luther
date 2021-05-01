@@ -34,7 +34,10 @@ class BreakoutStrategy(Strategy):
         support = state.support
         resistance = state.resistance
 
-        if not (support and resistance):
+        latest_timestamp = data["timestamp"].tail(1).values[0]
+        last_saved_timestamp = max(support.timestamp, resistance.timestamp) if (support and resistance) else 0
+
+        if not (support and resistance) or (latest_timestamp - last_saved_timestamp) > 300:  # 300 seconds = 5 minutes.
             support, resistance = self._draw_sr_zones(data)
             state.support = support
             state.resistance = resistance
@@ -48,27 +51,28 @@ class BreakoutStrategy(Strategy):
                                zone in zones]
 
         if not all(is_between_sr_zones):
-            print("Redrawing support and resistance zones.")
-            support, resistance = self._draw_sr_zones(data)
-            state.support = support
-            state.resistance = resistance
+            state.support = new_support
+            support = new_support
+            state.resistance = new_resistance
+            resistance = new_resistance
+            # from core.classes.slack import Slack
+            # Slack().send(f"Drawing SR Zones. Support at level {support.value} and resistance at {resistance.value}.")
 
-        if support.line.slope < resistance.line.slope:
-            # Indicating that the lines are diverging.
-            support.line.slope = 0
-            resistance.line.slope = 0
+        if support.line.diverges_in_future(resistance.line):
+            if support.line.slope < 0 and resistance.line.slope < 0:
+                support.line.slope = 0
+            elif support.line.slope > 0 and resistance.line.slope > 0:
+                resistance.line.slope = 0
+            else:
+                support.line.slope = 0
+                resistance.line.slope = 0
 
         self._plot_zones(data, support, resistance)
-
-        # TODO: Delete me!
-        from core.classes.phemex import Phemex
-        print(support.line.slope / Phemex.SCALE_EP_BTCUSD)
-        print(resistance.line.slope / Phemex.SCALE_EP_BTCUSD)
 
         ##
         # STEP 3: Once support and resistance lines are confirmed, check current price against zones.
         ##
-        last_close_price = data["lastCloseEp"].tail(1).values[0]  # Note, not "closeEp" as in other parts of script.
+        last_close_price = data["lastCloseEp"].tail(1).values[0]
         price_timestamp = data["timestamp"].tail(1).values[0]
 
         price_between_sr = SRZones.value_is_between_sr_zones(support, resistance, last_close_price, price_timestamp)
@@ -92,10 +96,9 @@ class BreakoutStrategy(Strategy):
 
         return [signal]
 
-    def check_exit_conditions(self, data: pd.DataFrame, user: User) -> list:
+    def check_exit_conditions(self, user: User) -> list:
         """
 
-        :param data:
         :param user:
         :return:
         """
@@ -120,6 +123,7 @@ class BreakoutStrategy(Strategy):
         sr_zones = SRZones(market_data=data, width=self.params["breakout"]["zone_width"])
         support = sr_zones.support_zone
         resistance = sr_zones.resistance_zone
+
         return support, resistance
 
     def _plot_zones(self, data, support, resistance):
@@ -130,93 +134,44 @@ class BreakoutStrategy(Strategy):
         :param resistance:
         :return:
         """
-        from scipy.signal import argrelmin, argrelmax
-        import numpy as np
+
         import matplotlib.pyplot as plt
 
         plt.figure()
 
         sr_zones = SRZones(market_data=data, width=self.params["breakout"]["zone_width"])
         df = data.tail(sr_zones.max_periods)
-        df = df.reset_index()
 
         closes = df["closeEp"].values.tolist()
 
-        peak_indexes = argrelmax(np.array(df["closeEp"]), order=sr_zones.extrema_order)
-        peak_indexes = peak_indexes[0].tolist()
-
-        valley_indexes = argrelmin(np.array(df["closeEp"]), order=sr_zones.extrema_order)
-        valley_indexes = valley_indexes[0].tolist()
-
-        def get_close_values(extremes):
-            points = []
-            for j in extremes:
-                point = closes[j]
-                points.append(point)
-            return points
-
-        peak_values = get_close_values(peak_indexes)
-        valley_values = get_close_values(valley_indexes)
+        # peak_indexes = [resistance.line.coords[i][0] for i in range(len(resistance.line.coords))]
+        # peak_values = [resistance.line.coords[j][1] for j in range(len(resistance.line.coords))]
+        #
+        # valley_indexes = [support.line.coords[k][0] for k in range(len(support.line.coords))]
+        # valley_values = [support.line.coords[m][1] for m in range(len(support.line.coords))]
 
         plt.plot(df.index.values.tolist(), closes, color="b")
-        plt.scatter(peak_indexes, peak_values, color="g")
-        plt.scatter(valley_indexes, valley_values, color="r")
+        # plt.scatter(peak_indexes, peak_values, color="g")
+        # plt.scatter(valley_indexes, valley_values, color="r")
 
-        def get_points_list(indexes, values):
-            """
-            # Put indexes and values together in a list of tuples.
-            """
-            points_list = []
-            for i in range(len(indexes)):
-                points_list.append((indexes[i], values[i]))
-            return points_list
+        open_timestamp = df["timestamp"].head(1).values[0]
+        close_timestamp = df["timestamp"].tail(1).values[0]
 
-        s = get_points_list(valley_indexes, valley_values)
-        r = get_points_list(peak_indexes, peak_values)
+        diff = close_timestamp - open_timestamp
+        extended_timestamp = close_timestamp + (0.2 * diff)
 
-        ##
-        # Iterate through the points to generate a line for the most recent support/resistance lines.
-        # Must be at least two points in a row in order for there to be an eligible line.
-        ##
-        def get_slope_line_coords(data_points, slope):
-            if len(data_points) > 1:
-                x2 = data_points[-1][0]
-                y2 = data_points[-1][1]
-                x1 = data_points[-2][0]
-                y1 = data_points[-2][1]
+        support_line = [[open_timestamp, extended_timestamp],
+                        [support.line.get_value_for_timestamp(open_timestamp),
+                         support.line.get_value_for_timestamp(extended_timestamp)]]
 
-                if abs(slope) < sr_zones.max_slope and not 0:
-                    c = y1 - (slope * x1)
-                    xa = 0
-                    ya = (slope * xa) + c
-                    xb = sr_zones.max_periods * 1.2
-                    yb = (slope * xb) + c
-                else:
-                    xa = 0
-                    ya = y2
-                    xb = sr_zones.max_periods * 1.2
-                    yb = y2
-                    slope = 0
-
-                slope_line_coords = [[xa, xb], [ya, yb]]
-
-            else:
-                xa = 0
-                ya = data_points[-1][1]
-                xb = sr_zones.max_periods * 1.2
-                yb = data_points[-1][1]
-                slope = 0
-
-                slope_line_coords = [[xa, xb], [ya, yb]]
-
-            return slope_line_coords, slope
-
-        support_line, support_slope = get_slope_line_coords(s, support.line.slope)
-        resistance_line, resistance_slope = get_slope_line_coords(r, resistance.line.slope)
+        resistance_line = [[open_timestamp, extended_timestamp],
+                           [resistance.line.get_value_for_timestamp(open_timestamp),
+                            resistance.line.get_value_for_timestamp(extended_timestamp)]]
 
         plt.plot(support_line[0], support_line[1], color="r", lw=5, alpha=0.2)
         plt.plot(support_line[0], support_line[1], color="r")
         plt.plot(resistance_line[0], resistance_line[1], color="g", lw=5, alpha=0.2)
         plt.plot(resistance_line[0], resistance_line[1], color="g")
 
-        plt.savefig("fig.png", dpi=150)
+        plt.savefig("data/fig.png", dpi=150)
+        plt.close()

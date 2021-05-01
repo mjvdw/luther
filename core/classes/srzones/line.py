@@ -122,3 +122,19 @@ class Line(object):
             return True
         else:
             return False
+
+    def diverges_in_future(self, other_line) -> bool:
+        """
+
+        :param other_line:
+        :return:
+        """
+        try:
+            intercept_timestamp = (self.intercept - other_line.intercept) / (other_line.slope - self.slope)
+        except ZeroDivisionError:
+            return True
+
+        if intercept_timestamp > self.coords[-1][0] and other_line.coords[-1][0]:
+            return False
+        else:
+            return True
