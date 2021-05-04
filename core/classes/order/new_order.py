@@ -112,8 +112,11 @@ class NewOrder(object):
         ord_type = self.strategy.order_entry_params["ord_type"]
         time_in_force = "PostOnly" if ord_type == "Limit" else "GoodTillCancel"
 
-        take_profit = (1 + (self.strategy.order_entry_params["safety_tp"] * side_multiplier)) * current_price
-        stop_loss = (1 - (self.strategy.order_entry_params["safety_sl"] * side_multiplier)) * current_price
+        tp = self.strategy.order_entry_params["safety_tp"]
+        sl = self.strategy.order_entry_params["safety_sl"]
+
+        take_profit = (1 + (tp * side_multiplier)) * current_price if tp else None
+        stop_loss = (1 - (sl * side_multiplier)) * current_price if sl else None
 
         params = {
             "actionBy": "FromOrderPlacement",

@@ -80,15 +80,15 @@
   "order_params": {
     "entry": {
       "ord_type": "Limit",
-      "limit_margin_ep": 5000,
+      "limit_margin_ep": 1,
       "wallet_ratio": 1,
-      "safety_tp": 0.05,
-      "safety_sl": 0.02,
+      "safety_tp": 0.5,
+      "safety_sl": 0,
       "entry_patience": 60
     },
     "exit": {
       "ord_type": "Limit",
-      "limit_margin_ep": 5000
+      "limit_margin_ep": 10
     }
   }
 }

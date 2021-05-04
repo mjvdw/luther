@@ -10,7 +10,7 @@ from .strategy.strategy import Strategy
 
 class User(object):
 
-    TEST_NET: bool = True
+    TEST_NET: bool = False
 
     def __init__(self, strategy: Strategy):
         """
@@ -35,11 +35,11 @@ class User(object):
 
         if self._get_is_open_positions(client):
             all_open_positions = client.query_account_n_positions(self.strategy.currency)["data"]["positions"]
+
             for position_details in all_open_positions:
-                position = Position(position_details)
-                positions.append(position)
-        else:
-            position = None
+                if position_details["symbol"] == self.strategy.symbol:
+                    position = Position(position_details)
+                    positions.append(position)
 
         if len(positions) > 1:
             raise IndexError("Too many positions received from API.")
