@@ -24,10 +24,10 @@ class SRZones(object):
         arbitrary at this stage)
         """
         self.market_data = market_data
-        self.width = width * Phemex.SCALE_EP_BTCUSD
+        self.width = width * Phemex.SCALE_EP
         self.max_periods = max_periods if max_periods <= 1000 else 1000
         self.extrema_order = extrema_order
-        self.max_slope = max_slope * Phemex.SCALE_EP_BTCUSD  # Making the slope a more manageable number by scaling.
+        self.max_slope = max_slope * Phemex.SCALE_EP  # Making the slope a more manageable number by scaling.
 
     @property
     def support_zone(self) -> Zone:

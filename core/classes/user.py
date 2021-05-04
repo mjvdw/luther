@@ -10,7 +10,7 @@ from .strategy.strategy import Strategy
 
 class User(object):
 
-    TEST_NET: bool = False
+    TEST_NET: bool = True
 
     def __init__(self, strategy: Strategy):
         """
@@ -73,7 +73,12 @@ class User(object):
         """
 
         client = self.connect()
-        wallet_balance = float(client.query_client_wallet()["data"][0]["userMarginVo"][0]["accountBalance"])
+        # wallet_balance = float(client.query_client_wallet()["data"][0]["userMarginVo"][0]["accountBalance"])
+        wallet_balance = float(client.query_account_n_positions(self.strategy.currency)["data"]["account"]
+                               ["accountBalanceEv"])
+
+        scale = Phemex.SCALE_EV_BTCUSD if self.strategy.currency == "BTC" else Phemex.SCALE_EV
+        wallet_balance = wallet_balance / scale
 
         return wallet_balance
 

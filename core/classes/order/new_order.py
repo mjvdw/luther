@@ -60,7 +60,7 @@ class NewOrder(object):
         Un-scaled entry price for this order.
         :return: Un-scaled entry price for this order.
         """
-        return self.entry_price_ep / Phemex.SCALE_EP_BTCUSD
+        return self.entry_price_ep / Phemex.SCALE_EP
 
     def _generate_order_parameters(self):
         """
@@ -99,7 +99,15 @@ class NewOrder(object):
         # Quantity must be no more than half the wallet balance, otherwise it isn't possible to exit the order
         # by submitting an order in the opposite direction. Therefore a 0.5 multiplier is hardcoded in.
         wallet_ratio = self.strategy.order_entry_params["wallet_ratio"]
-        quantity = int(user.wallet_balance * wallet_ratio * 0.5 * leverage * (current_price/Phemex.SCALE_EP_BTCUSD))
+
+        value = user.wallet_balance * wallet_ratio * 0.5 * leverage
+
+        if self.strategy.currency == "BTC":
+            quantity = value * (current_price / Phemex.SCALE_EP)  # Because trading in BTC to USD. Value is always USD.
+        else:
+            quantity = value / (current_price / Phemex.SCALE_EP)  # Because trading in USD to coin. Value is always USD.
+
+        quantity = int(quantity / self.strategy.contract_size)
 
         ord_type = self.strategy.order_entry_params["ord_type"]
         time_in_force = "PostOnly" if ord_type == "Limit" else "GoodTillCancel"

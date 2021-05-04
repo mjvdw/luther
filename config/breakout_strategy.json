@@ -1,6 +1,7 @@
 {
   "type": "BREAKOUT",
   "currency": "BTC",
+  "contract_size": 1,
   "symbol": "BTCUSD",
   "klines": {
     "period": 300,

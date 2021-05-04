@@ -88,6 +88,6 @@ class Position(object):
 
         current_price = self._market_data["closeEp"].tail(1).values[0]
         net_pnl_usd = self.net_pnl * self.size
-        net_pnl_btc = net_pnl_usd / (current_price / Phemex.SCALE_EP_BTCUSD)
+        net_pnl_btc = net_pnl_usd / (current_price / Phemex.SCALE_EP)
 
         return net_pnl_btc

@@ -54,7 +54,7 @@ def trade_logic(strategy: Strategy) -> None:
 
         if signal.action != Signal.WAIT and not user.is_unfilled_orders:
             order = NewOrder(data=market_data, signal=signal, strategy=strategy, user=user)
-            # order.send()
+            order.send()
         elif signal.action == Signal.WAIT and user.is_unfilled_orders and not user.is_open_positions:
             current_time = time.time()
             last_order_time = user.unfilled_order.action_time/1000000000  # Convert from nanoseconds to seconds.
@@ -85,10 +85,10 @@ def simulate_trading(market_data, signal, strategy, user):
 
         take_profit_price = order.order_params["priceEp"] * (1 + (side_multiplier * float(strategy.conditions["exit"]
                                                                                           ["take_profit"])))
-        take_profit_price = take_profit_price / Phemex.SCALE_EP_BTCUSD
+        take_profit_price = take_profit_price / Phemex.SCALE_EP
         stop_loss_price = order.order_params["priceEp"] * (1 + (side_multiplier * float(strategy.conditions["exit"]
                                                                                         ["stop_loss"])))
-        stop_loss_price = stop_loss_price / Phemex.SCALE_EP_BTCUSD
+        stop_loss_price = stop_loss_price / Phemex.SCALE_EP
 
         Slack().send(f"Entered {side} position of size {size} at US${order.entry_price:,.2f}, with a target price of "
                      f"US${take_profit_price:,.2f} and stop loss of US${stop_loss_price:,.2f}.")
@@ -110,11 +110,11 @@ def simulate_trading(market_data, signal, strategy, user):
 
         if take_profit:
             profit = ((current_price - position["priceEp"])/current_price) * side_multiplier * 100
-            scaled_current_price = current_price/Phemex.SCALE_EP_BTCUSD
+            scaled_current_price = current_price/Phemex.SCALE_EP
             Slack().send(f"Exited position at US${scaled_current_price:,.2f} for a profit of {profit:.2f}%")
             state.existing_position = None
         elif stop_loss:
             loss = ((position["stopLossEp"] - current_price)/current_price) * side_multiplier * 100
-            scaled_current_price = current_price / Phemex.SCALE_EP_BTCUSD
+            scaled_current_price = current_price / Phemex.SCALE_EP
             Slack().send(f"Exited position at US${scaled_current_price:,.2f} for a loss of {loss:.2f}%")
             state.existing_position = None

@@ -12,9 +12,9 @@ from core.core import run
 
 if __name__ == "__main__":
     try:
-        # strategy_file = os.path.join(os.path.dirname(__file__), 'config/scalping_strategy.json')
+        strategy_file = os.path.join(os.path.dirname(__file__), 'config/scalping_strategy_doge.json')
         # strategy_file = os.path.join(os.path.dirname(__file__), 'config/simple_strategy_v004.json')
-        strategy_file = os.path.join(os.path.dirname(__file__), 'config/breakout_strategy.json')
+        # strategy_file = os.path.join(os.path.dirname(__file__), 'config/breakout_strategy.json')
 
         with open(strategy_file, "r") as json_file:
             strategy_params = json.load(json_file)

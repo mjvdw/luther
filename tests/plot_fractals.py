@@ -11,7 +11,7 @@ from core.classes.database import Database
 MAX_DATA = 100
 WIDTH = 50
 EXTREMA_ORDER = 10
-MAX_SLOPE = 4 * Phemex.SCALE_EP_BTCUSD
+MAX_SLOPE = 4 * Phemex.SCALE_EP
 
 """
 Documentation for matplotlib-finance: https://github.com/matplotlib/mplfinance/blob/master/examples/using_lines.ipynb

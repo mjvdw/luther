@@ -1,6 +1,7 @@
 {
   "type": "SIMPLE",
   "currency": "BTC",
+  "contract_size": 1,
   "symbol": "BTCUSD",
   "klines": {
     "period": 60,

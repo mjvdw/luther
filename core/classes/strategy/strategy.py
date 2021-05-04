@@ -107,3 +107,8 @@ class Strategy(object):
     def entry_patience(self) -> int:
         entry_patience = self.params["order_params"]["entry"]["entry_patience"]
         return entry_patience
+
+    @property
+    def contract_size(self) -> int:
+        contract_size = self.params["contract_size"]
+        return contract_size
