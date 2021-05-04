@@ -50,7 +50,7 @@ def trade_logic(strategy: Strategy) -> None:
 
         print(signal.signal)
 
-        simulate_trading(market_data, signal, strategy, user)
+        # simulate_trading(market_data, signal, strategy, user)
 
         if signal.action != Signal.WAIT and not user.is_unfilled_orders:
             order = NewOrder(data=market_data, signal=signal, strategy=strategy, user=user)
