@@ -70,10 +70,10 @@ class ScalpingStrategy(Strategy):
         client = User.connect()
         exit_distance = self._get_current_exit_distance(client, data)
 
-        if exit_distance > (2 * super().order_exit_params["limit_margin_ep"]) and exit_distance != 0:
-            client.cancel_all_normal_orders(super().symbol)
-            action = Signal.EXIT
-        elif user.is_open_positions and not user.is_unfilled_orders:
+        # if exit_distance > (2 * super().order_exit_params["limit_margin_ep"]) and exit_distance != 0:
+        #     client.cancel_all_normal_orders(super().symbol)
+        #     action = Signal.EXIT
+        if user.is_open_positions and not user.is_unfilled_orders:
             action = Signal.EXIT
         else:
             action = Signal.WAIT
