@@ -3,7 +3,7 @@
   "currency": "BTC",
   "symbol": "BTCUSD",
   "klines": {
-    "period": 60,
+    "period": 300,
     "symbol": "BTCUSD"
   },
   "indicators": [],
@@ -14,8 +14,8 @@
     "enter": [],
     "exit": {
       "action": "EXIT",
-      "stop_loss": -0.0025,
-      "take_profit": 0.01,
+      "stop_loss": -0.0024,
+      "take_profit": 0.0105,
       "indicators": []
     }
   },
@@ -24,8 +24,8 @@
       "ord_type": "Market",
       "limit_margin_ep": 5000,
       "wallet_ratio": 0.1,
-      "safety_tp": 0.03,
-      "safety_sl": 0.005,
+      "safety_tp": 0.015,
+      "safety_sl": 0.0024,
       "entry_patience": 60
     },
     "exit": {

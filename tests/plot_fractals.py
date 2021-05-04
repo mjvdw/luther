@@ -96,8 +96,6 @@ def attempt_three(df):
     support_line, support_slope = get_slope_line_coords(support)
     resistance_line, resistance_slope = get_slope_line_coords(resistance)
 
-    print(support_line, resistance_line)
-
     plt.plot(support_line[0], support_line[1], color="r", lw=15, alpha=0.2)
     plt.plot(support_line[0], support_line[1], color="r")
     plt.plot(resistance_line[0], resistance_line[1], color="g", lw=15, alpha=0.2)

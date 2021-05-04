@@ -67,7 +67,7 @@ class BreakoutStrategy(Strategy):
                 support.line.slope = 0
                 resistance.line.slope = 0
 
-        self._plot_zones(data, support, resistance)
+        # self._plot_zones(data, support, resistance)
 
         ##
         # STEP 3: Once support and resistance lines are confirmed, check current price against zones.
@@ -79,6 +79,8 @@ class BreakoutStrategy(Strategy):
 
         if price_between_sr:
             action = Signal.WAIT
+            # TODO: DELETE ME
+            # action = Signal.ENTER_LONG
             confidence = 1
         else:
             confidence = 2
@@ -98,9 +100,11 @@ class BreakoutStrategy(Strategy):
 
     def check_exit_conditions(self, user: User) -> list:
         """
-
-        :param user:
-        :return:
+        Check whether the exit conditions are met. In a breakout strategy, where the limit exit order is placed
+        immediately, this will return an exit signal immediately after an order is placed, and then a wait signal from
+        that point on, until that limit exit order is filled.
+        :param user: The current user.
+        :return: a list of signals (in this case, always of length 1).
         """
         if user.is_open_positions and not user.is_unfilled_orders:
             action = Signal.SET_EXIT_LIMIT
@@ -173,5 +177,5 @@ class BreakoutStrategy(Strategy):
         plt.plot(resistance_line[0], resistance_line[1], color="g", lw=5, alpha=0.2)
         plt.plot(resistance_line[0], resistance_line[1], color="g")
 
-        plt.savefig("data/fig.png", dpi=150)
+        plt.savefig("fig.png", dpi=150)
         plt.close()
