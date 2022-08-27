@@ -140,7 +140,8 @@ class WebsocketConnection(object):
             is_in_index = df.index.isin(prev_df.index)
             is_current_period = is_in_index[-1]
             if not is_current_period:
-                df = prev_df.append(df.tail(1))
+                # df = prev_df.append(df.tail(1))
+                df = pd.concat([prev_df, df.tail(1)])
                 df = df.iloc[1:]
             else:
                 df = prev_df
