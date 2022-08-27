@@ -56,13 +56,15 @@ class Phemex(object):
 
     def _send_request(self, method, endpoint, params={}, body={}):
         expiry = str(trunc(time.time()) + 60)
-        query_string = '&'.join(['{}={}'.format(k,v) for k,v in params.items()])
+        query_string = '&'.join(['{}={}'.format(k, v)
+                                for k, v in params.items()])
         message = endpoint + query_string + expiry
         body_str = ""
         if body:
             body_str = json.dumps(body, separators=(',', ':'))
             message += body_str
-        signature = hmac.new(self.api_secret.encode('utf-8'), message.encode('utf-8'), hashlib.sha256)
+        signature = hmac.new(self.api_secret.encode(
+            'utf-8'), message.encode('utf-8'), hashlib.sha256)
         self.session.headers.update({
             'x-phemex-request-signature': signature.hexdigest(),
             'x-phemex-request-expiry': expiry,
@@ -89,7 +91,7 @@ class Phemex(object):
         """
         https://github.com/phemex/phemex-api-docs/blob/master/Public-API-en.md#querytradeaccount
         """
-        return self._send_request("get", "/accounts/accountPositions", {'currency':currency})
+        return self._send_request("get", "/accounts/accountPositions", {'currency': currency})
 
     def place_order(self, params={}):
         """
@@ -116,7 +118,7 @@ class Phemex(object):
         https://github.com/phemex/phemex-api-docs/blob/master/Public-API-en.md#625-cancel-all-orders
         """
         return self._send_request("delete", "/orders/all",
-            params={"symbol": symbol, "untriggered": str(untriggered_order).lower()})
+                                  params={"symbol": symbol, "untriggered": str(untriggered_order).lower()})
 
     def cancel_all_normal_orders(self, symbol):
         self._cancel_all(symbol, untriggered_order=False)
@@ -132,13 +134,13 @@ class Phemex(object):
         """
         https://github.com/phemex/phemex-api-docs/blob/master/Public-API-en.md#627-change-leverage
         """
-        return self._send_request("PUT", "/positions/leverage", params={"symbol":symbol, "leverage": leverage})
+        return self._send_request("PUT", "/positions/leverage", params={"symbol": symbol, "leverage": leverage})
 
     def change_risklimit(self, symbol, risk_limit=0):
         """
         https://github.com/phemex/phemex-api-docs/blob/master/Public-API-en.md#628-change-position-risklimit
         """
-        return self._send_request("PUT", "/positions/riskLimit", params={"symbol":symbol, "riskLimit": risk_limit})
+        return self._send_request("PUT", "/positions/riskLimit", params={"symbol": symbol, "riskLimit": risk_limit})
 
     def query_open_orders(self, symbol: str):
         """

@@ -7,7 +7,8 @@ class Line(object):
         self.coords = coords
 
         self._slope = self._get_line_slope_from_coords(self.coords)
-        self._intercept = self._get_line_intercept_from_coords(self.coords, self.slope)
+        self._intercept = self._get_line_intercept_from_coords(
+            self.coords, self.slope)
 
     @property
     def slope(self) -> int:
@@ -79,7 +80,8 @@ class Line(object):
         :param slope: The new slope value.
         :return: The recalculated y-intercept.
         """
-        self._intercept = self._get_line_intercept_from_coords(coords=self.coords, slope=slope)
+        self._intercept = self._get_line_intercept_from_coords(
+            coords=self.coords, slope=slope)
 
     def value_is_above_line(self, value: float, timestamp: int) -> bool:
         """
@@ -130,7 +132,8 @@ class Line(object):
         :return:
         """
         try:
-            intercept_timestamp = (self.intercept - other_line.intercept) / (other_line.slope - self.slope)
+            intercept_timestamp = (
+                self.intercept - other_line.intercept) / (other_line.slope - self.slope)
         except ZeroDivisionError:
             return True
 

@@ -35,10 +35,13 @@ class ScalpingStrategy(Strategy):
 
             for param in params:
                 # Test each parameter within one set of conditions.
-                left = data[param[0]].tail(1).values[0] if type(param[0]) == str else param[0]
-                right = data[param[1]].tail(1).values[0] if type(param[1]) == str else param[1]
+                left = data[param[0]].tail(1).values[0] if type(
+                    param[0]) == str else param[0]
+                right = data[param[1]].tail(1).values[0] if type(
+                    param[1]) == str else param[1]
 
-                expression = str(left) + param[2] + str(right)  # Comparison expression string to be evaluated.
+                # Comparison expression string to be evaluated.
+                expression = str(left) + param[2] + str(right)
                 passed = eval(expression)  # Result of evaluation.
                 results.append(passed)
 
@@ -100,7 +103,8 @@ class ScalpingStrategy(Strategy):
         current_price = data["closeEp"].tail(1).values[0]
 
         try:
-            unfilled_orders = client.query_open_orders(super().symbol)["data"]["rows"]
+            unfilled_orders = client.query_open_orders(super().symbol)[
+                "data"]["rows"]
             for unfilled_order in unfilled_orders:
                 if unfilled_order["orderType"] == "Limit":
                     orders.append(unfilled_order)

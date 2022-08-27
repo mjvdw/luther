@@ -33,10 +33,13 @@ class SimpleStrategy(Strategy):
 
             for param in params:
                 # Test each parameter within one set of conditions.
-                left = data[param[0]].tail(1).values[0] if type(param[0]) == str else param[0]
-                right = data[param[1]].tail(1).values[0] if type(param[1]) == str else param[1]
+                left = data[param[0]].tail(1).values[0] if type(
+                    param[0]) == str else param[0]
+                right = data[param[1]].tail(1).values[0] if type(
+                    param[1]) == str else param[1]
 
-                expression = str(left) + param[2] + str(right)  # Comparison expression string to be evaluated.
+                # Comparison expression string to be evaluated.
+                expression = str(left) + param[2] + str(right)
                 passed = eval(expression)  # Result of evaluation.
                 results.append(passed)
 
@@ -80,8 +83,10 @@ class SimpleStrategy(Strategy):
                 side_key = "long_exit_limit" if position.side == "Buy" else "short_exit_limit"
                 param = indicator[side_key]
 
-                left = data[param[0]].tail(1).values[0] if type(param[0]) == str else param[0]
-                right = data[param[1]].tail(1).values[0] if type(param[1]) == str else param[1]
+                left = data[param[0]].tail(1).values[0] if type(
+                    param[0]) == str else param[0]
+                right = data[param[1]].tail(1).values[0] if type(
+                    param[1]) == str else param[1]
                 compare_operator = param[2]
 
                 condition_str = str(left) + str(compare_operator) + str(right)

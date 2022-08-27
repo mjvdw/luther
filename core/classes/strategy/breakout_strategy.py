@@ -35,9 +35,11 @@ class BreakoutStrategy(Strategy):
         resistance = state.resistance
 
         latest_timestamp = data["timestamp"].tail(1).values[0]
-        last_saved_timestamp = max(support.timestamp, resistance.timestamp) if (support and resistance) else 0
+        last_saved_timestamp = max(support.timestamp, resistance.timestamp) if (
+            support and resistance) else 0
 
-        if not (support and resistance) or (latest_timestamp - last_saved_timestamp) > 300:  # 300 seconds = 5 minutes.
+        # 300 seconds = 5 minutes.
+        if not (support and resistance) or (latest_timestamp - last_saved_timestamp) > 300:
             support, resistance = self._draw_sr_zones(data)
             state.support = support
             state.resistance = resistance
@@ -75,7 +77,8 @@ class BreakoutStrategy(Strategy):
         last_close_price = data["lastCloseEp"].tail(1).values[0]
         price_timestamp = data["timestamp"].tail(1).values[0]
 
-        price_between_sr = SRZones.value_is_between_sr_zones(support, resistance, last_close_price, price_timestamp)
+        price_between_sr = SRZones.value_is_between_sr_zones(
+            support, resistance, last_close_price, price_timestamp)
 
         if price_between_sr:
             action = Signal.WAIT
@@ -84,7 +87,8 @@ class BreakoutStrategy(Strategy):
             confidence = 1
         else:
             confidence = 2
-            price_above_resistance_zone = resistance.value_is_above_zone(last_close_price, price_timestamp)
+            price_above_resistance_zone = resistance.value_is_above_zone(
+                last_close_price, price_timestamp)
             if price_above_resistance_zone:
                 action = Signal.ENTER_LONG
             else:
@@ -124,7 +128,8 @@ class BreakoutStrategy(Strategy):
         Helper method to draw new support and resistance zones.
         :param data: data required to draw the support and resistance zones.
         """
-        sr_zones = SRZones(market_data=data, width=self.params["breakout"]["zone_width"])
+        sr_zones = SRZones(
+            market_data=data, width=self.params["breakout"]["zone_width"])
         support = sr_zones.support_zone
         resistance = sr_zones.resistance_zone
 
@@ -143,7 +148,8 @@ class BreakoutStrategy(Strategy):
 
         plt.figure()
 
-        sr_zones = SRZones(market_data=data, width=self.params["breakout"]["zone_width"])
+        sr_zones = SRZones(
+            market_data=data, width=self.params["breakout"]["zone_width"])
         df = data.tail(sr_zones.max_periods)
 
         closes = df["closeEp"].values.tolist()
@@ -174,7 +180,8 @@ class BreakoutStrategy(Strategy):
 
         plt.plot(support_line[0], support_line[1], color="r", lw=5, alpha=0.2)
         plt.plot(support_line[0], support_line[1], color="r")
-        plt.plot(resistance_line[0], resistance_line[1], color="g", lw=5, alpha=0.2)
+        plt.plot(resistance_line[0], resistance_line[1],
+                 color="g", lw=5, alpha=0.2)
         plt.plot(resistance_line[0], resistance_line[1], color="g")
 
         plt.savefig("fig.png", dpi=150)

@@ -105,12 +105,14 @@ class Signal(object):
 
         """
 
-        indicators = self.strategy.indicators  # Get a dictionary representing indicators.
+        # Get a dictionary representing indicators.
+        indicators = self.strategy.indicators
 
         # Add indicator values to self.data DataFrame, but iterating through the user-provided parameters.
         for indicator in indicators:
             kind = indicator["ta_kind"]  # Type of indicator, for pandas_ta.
-            params = indicator["params"]  # Parameters required for indicator, for pandas_ta.
+            # Parameters required for indicator, for pandas_ta.
+            params = indicator["params"]
 
             ta_output = self.data.ta(kind=kind, **params)
 
@@ -119,11 +121,13 @@ class Signal(object):
                 # individually.
                 for series in ta_output:
                     self.data[series] = ta_output[series]
-                    self._indicators[series] = self.data[series].tail(1).values[0]
+                    self._indicators[series] = self.data[series].tail(
+                        1).values[0]
             else:
                 # Else, just set the Series to be a new column in the existing DataFrame.
                 self.data[ta_output.name] = ta_output
-                self._indicators[ta_output.name] = self.data[ta_output.name].tail(1).values[0]
+                self._indicators[ta_output.name] = self.data[ta_output.name].tail(
+                    1).values[0]
 
     def _check_conditions(self):
         """
@@ -133,12 +137,15 @@ class Signal(object):
 
         """
 
-        conditions = self.strategy.conditions  # Get a dictionary containing the conditions for trading.
-        valid_conditions_format = self._validate_conditions_format(conditions=conditions)
+        # Get a dictionary containing the conditions for trading.
+        conditions = self.strategy.conditions
+        valid_conditions_format = self._validate_conditions_format(
+            conditions=conditions)
 
         is_open_positions = self.user.is_open_positions
         is_unfilled_orders = self.user.is_unfilled_orders
-        is_trading = self.user.is_trading  # is_trading is a combination of (is_open_positions OR is_unfilled_orders).
+        # is_trading is a combination of (is_open_positions OR is_unfilled_orders).
+        is_trading = self.user.is_trading
 
         if valid_conditions_format and not is_trading:
             # Evaluate entry conditions.
@@ -146,7 +153,8 @@ class Signal(object):
         elif valid_conditions_format and is_open_positions:
             # Evaluate exit conditions, OR if exit order has been placed, but unfilled, checking whether it should move
             # to match large price movements.
-            signals = self.strategy.check_exit_conditions(data=self.data, user=self.user)
+            signals = self.strategy.check_exit_conditions(
+                data=self.data, user=self.user)
         else:
             signals = None
 
@@ -176,6 +184,8 @@ class Signal(object):
             valid = True
             return valid
         except KeyError:
-            raise KeyError("Conditions not formatted correctly. A dictionary key is either missing or incorrect.")
+            raise KeyError(
+                "Conditions not formatted correctly. A dictionary key is either missing or incorrect.")
         except IndexError:
-            raise IndexError("Conditions not formatted correctly. List index out of range.")
+            raise IndexError(
+                "Conditions not formatted correctly. List index out of range.")

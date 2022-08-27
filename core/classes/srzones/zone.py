@@ -43,8 +43,10 @@ class Zone(object):
         return value
 
     def value_is_in_zone(self, value: float, timestamp: int) -> bool:
-        is_below_upper_line = self.upper_boundary_line.value_is_below_line(value, timestamp)
-        is_above_lower_line = self.lower_boundary_line.value_is_above_line(value, timestamp)
+        is_below_upper_line = self.upper_boundary_line.value_is_below_line(
+            value, timestamp)
+        is_above_lower_line = self.lower_boundary_line.value_is_above_line(
+            value, timestamp)
 
         if is_below_upper_line and is_above_lower_line:
             return True
@@ -52,9 +54,11 @@ class Zone(object):
             return False
 
     def value_is_above_zone(self, value: float, timestamp: int) -> bool:
-        is_above_upper_line = self.upper_boundary_line.value_is_above_line(value, timestamp)
+        is_above_upper_line = self.upper_boundary_line.value_is_above_line(
+            value, timestamp)
         return is_above_upper_line
 
     def value_is_below_zone(self, value: float, timestamp: int) -> bool:
-        is_below_lower_line = self.lower_boundary_line.value_is_below_line(value, timestamp)
+        is_below_lower_line = self.lower_boundary_line.value_is_below_line(
+            value, timestamp)
         return is_below_lower_line

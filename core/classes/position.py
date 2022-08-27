@@ -58,7 +58,8 @@ class Position(object):
 
         current_price = self._market_data["closeEp"].tail(1).values[0]
         price_change = current_price - self.entry_price
-        side_multiplier = -1 if self.side == "Sell" else 1  # Convert negative values to positive for shorts.
+        # Convert negative values to positive for shorts.
+        side_multiplier = -1 if self.side == "Sell" else 1
         gross_pnl = (price_change / self.entry_price) * side_multiplier
 
         return gross_pnl

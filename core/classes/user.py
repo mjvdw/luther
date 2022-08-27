@@ -10,7 +10,7 @@ from .strategy.strategy import Strategy
 
 class User(object):
 
-    TEST_NET: bool = False
+    TEST_NET: bool = True
 
     def __init__(self, strategy: Strategy):
         """
@@ -34,7 +34,8 @@ class User(object):
         positions = []
 
         if self._get_is_open_positions(client):
-            all_open_positions = client.query_account_n_positions(self.strategy.currency)["data"]["positions"]
+            all_open_positions = client.query_account_n_positions(self.strategy.currency)[
+                "data"]["positions"]
 
             for position_details in all_open_positions:
                 if position_details["symbol"] == self.strategy.symbol:
@@ -111,7 +112,8 @@ class User(object):
         """
 
         client = User.connect()
-        is_trading = self._get_is_open_positions(client) or self._get_is_unfilled_orders(client)
+        is_trading = self._get_is_open_positions(
+            client) or self._get_is_unfilled_orders(client)
 
         return is_trading
 
@@ -145,7 +147,8 @@ class User(object):
         """
         num_positions = 0
         try:
-            open_positions = client.query_account_n_positions(self.strategy.currency)["data"]["positions"]
+            open_positions = client.query_account_n_positions(
+                self.strategy.currency)["data"]["positions"]
             for position_details in open_positions:
                 position = Position(position_details)
                 if position.size > 0:
@@ -166,7 +169,8 @@ class User(object):
         """
         num_unfilled_orders = 0
         try:
-            open_orders = client.query_open_orders(self.strategy.symbol)["data"]["rows"]
+            open_orders = client.query_open_orders(
+                self.strategy.symbol)["data"]["rows"]
             for order in open_orders:
                 if order["ordStatus"] == Phemex.ORDER_STATUS_NEW:
                     num_unfilled_orders += 1

@@ -27,7 +27,8 @@ class SRZones(object):
         self.width = width * Phemex.SCALE_EP
         self.max_periods = max_periods if max_periods <= 1000 else 1000
         self.extrema_order = extrema_order
-        self.max_slope = max_slope * Phemex.SCALE_EP  # Making the slope a more manageable number by scaling.
+        # Making the slope a more manageable number by scaling.
+        self.max_slope = max_slope * Phemex.SCALE_EP
 
     @property
     def support_zone(self) -> Zone:
@@ -35,7 +36,8 @@ class SRZones(object):
         Return a Zone object defining the upper and lower bounds for support zone.
         :return: Zone object defining upper and lower bounds for support zone.
         """
-        support_zone = self._get_zone_from_coords(coords=self._get_extrema_coords()["valleys"])
+        support_zone = self._get_zone_from_coords(
+            coords=self._get_extrema_coords()["valleys"])
         return support_zone
 
     @property
@@ -44,7 +46,8 @@ class SRZones(object):
         Return a Zone object defining the upper and lower bounds for resistance zone.
         :return: Zone object defining upper and lower bounds for resistance zone.
         """
-        resistance_zone = self._get_zone_from_coords(coords=self._get_extrema_coords()["peaks"])
+        resistance_zone = self._get_zone_from_coords(
+            coords=self._get_extrema_coords()["peaks"])
         return resistance_zone
 
     @staticmethod
@@ -57,8 +60,10 @@ class SRZones(object):
         :param timestamp: the timestamp related to the value.
         :return: A boolean indicating whether value is between zones.
         """
-        is_above_support = support.lower_boundary_line.value_is_above_line(value, timestamp)
-        is_below_resistance = resistance.upper_boundary_line.value_is_below_line(value, timestamp)
+        is_above_support = support.lower_boundary_line.value_is_above_line(
+            value, timestamp)
+        is_below_resistance = resistance.upper_boundary_line.value_is_below_line(
+            value, timestamp)
 
         if is_above_support and is_below_resistance:
             return True
@@ -72,7 +77,8 @@ class SRZones(object):
         :param timestamp: the timestamp at which the value occurs.
         :return: A boolean indicating whether the value is below the support zone.
         """
-        is_below_support = self.support_zone.value_is_below_zone(value, timestamp)
+        is_below_support = self.support_zone.value_is_below_zone(
+            value, timestamp)
         return is_below_support
 
     def value_is_above_resistance(self, value: float, timestamp: int) -> bool:
@@ -82,7 +88,8 @@ class SRZones(object):
         :param timestamp: the timestamp at which the value occurs.
         :return: A boolean indicating whether the value is above the resistance zone.
         """
-        is_above_resistance = self.support_zone.value_is_above_zone(value, timestamp)
+        is_above_resistance = self.support_zone.value_is_above_zone(
+            value, timestamp)
         return is_above_resistance
 
     def _get_extrema_coords(self) -> dict:
@@ -92,7 +99,8 @@ class SRZones(object):
         valleys).
         """
 
-        df = pd.DataFrame(self.market_data)  # Do not manipulate original market_data.
+        # Do not manipulate original market_data.
+        df = pd.DataFrame(self.market_data)
 
         closes = df["closeEp"].values.tolist()
         del closes[-5:]
@@ -100,8 +108,10 @@ class SRZones(object):
         indexes = df.index.tolist()
         del indexes[-5:]
 
-        peak_indexes = argrelmax(np.array(closes), order=self.extrema_order)[0].tolist()
-        valley_indexes = argrelmin(np.array(closes), order=self.extrema_order)[0].tolist()
+        peak_indexes = argrelmax(np.array(closes), order=self.extrema_order)[
+            0].tolist()
+        valley_indexes = argrelmin(
+            np.array(closes), order=self.extrema_order)[0].tolist()
 
         peaks = [(indexes[index], closes[index]) for index in peak_indexes]
         valleys = [(indexes[index], closes[index]) for index in valley_indexes]

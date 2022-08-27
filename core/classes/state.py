@@ -93,7 +93,7 @@ class State(object):
     @last_signal.setter
     def last_signal(self, last_signal):
         """
-    
+
         :param last_signal: 
         :return: 
         """
