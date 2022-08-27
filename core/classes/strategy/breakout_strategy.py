@@ -123,7 +123,7 @@ class BreakoutStrategy(Strategy):
 
         return [signal]
 
-    def _draw_sr_zones(self, data: pd.DataFrame) -> (Zone, Zone):
+    def _draw_sr_zones(self, data: pd.DataFrame):
         """
         Helper method to draw new support and resistance zones.
         :param data: data required to draw the support and resistance zones.

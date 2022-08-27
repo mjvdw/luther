@@ -1,5 +1,5 @@
 class Line(object):
-    def __init__(self, coords: [tuple]):
+    def __init__(self, coords):
         """
         A line set up using the y = mx + c mathematical format, which m is slope and c is the y intercept.
         :param coords: A list of length 2, containing two tuples
@@ -38,7 +38,7 @@ class Line(object):
         return value
 
     @staticmethod
-    def _get_line_slope_from_coords(coords: [tuple]) -> int:
+    def _get_line_slope_from_coords(coords) -> int:
         """
         Calculate the slope of the support or resistance line. If the line is steeper than the specified max_slope
         parameter, then make it horizontal (ie, slope of 0).
@@ -59,7 +59,7 @@ class Line(object):
         return slope
 
     @staticmethod
-    def _get_line_intercept_from_coords(coords: [tuple], slope: int) -> int:
+    def _get_line_intercept_from_coords(coords, slope: int) -> int:
         """
         Get the "y" value at the point where the line intercepts the y-axis.
         Note that the point where the line intercepts will be where x is the first timestamp available in the data.
