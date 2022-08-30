@@ -10,7 +10,7 @@ from .strategy.strategy import Strategy
 
 class User(object):
 
-    TEST_NET: bool = True
+    TEST_NET: bool = False
 
     def __init__(self, strategy: Strategy):
         """

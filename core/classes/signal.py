@@ -15,6 +15,8 @@ class Signal(object):
 
     SCALPING = "SCALPING"
     BREAKOUT = "BREAKOUT"
+    SIMPLE = "SIMPLE"
+    RANDOM = "RANDOM"
 
     def __init__(self, data: pd.DataFrame, strategy, user: User):
         """

@@ -7,15 +7,14 @@ from core.classes.slack import Slack
 from core.classes.strategy.breakout_strategy import BreakoutStrategy
 from core.classes.strategy.scalping_strategy import ScalpingStrategy
 from core.classes.strategy.simple_strategy import SimpleStrategy
+from core.classes.strategy.random_strategy import RandomStrategy
 from core.classes.strategy.strategy import Strategy
 from core.core import run
 
 if __name__ == "__main__":
     try:
         strategy_file = os.path.join(os.path.dirname(
-            __file__), 'config/scalping_strategy.json')
-        # strategy_file = os.path.join(os.path.dirname(__file__), 'config/simple_strategy_v004.json')
-        # strategy_file = os.path.join(os.path.dirname(__file__), 'config/breakout_strategy.json')
+            __file__), 'config/random_strategy.json')
 
         with open(strategy_file, "r") as json_file:
             strategy_params = json.load(json_file)
@@ -28,6 +27,8 @@ if __name__ == "__main__":
                 strategy = BreakoutStrategy(strategy_params)
             elif strategy_type == Strategy.SCALPING_STRATEGY:
                 strategy = ScalpingStrategy(strategy_params)
+            elif strategy_type == Strategy.RANDOM_STRATEGY:
+                strategy = RandomStrategy(strategy_params)
             else:
                 raise TypeError(f"Invalid strategy type: {strategy_type}")
 

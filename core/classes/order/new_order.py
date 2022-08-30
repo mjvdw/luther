@@ -38,7 +38,8 @@ class NewOrder(object):
 
         # Set leverage.
         if self.signal.action != self.signal.EXIT:
-            client.change_leverage(symbol=self.strategy.symbol, leverage=self.signal.confidence)
+            client.change_leverage(
+                symbol=self.strategy.symbol, leverage=self.signal.confidence)
 
         # Send order parameters via Phemex API.
         r = client.place_order(self.order_params)
@@ -86,13 +87,16 @@ class NewOrder(object):
         """
 
         side = "Buy" if self.signal.action == Signal.ENTER_LONG else "Sell"
-        side_multiplier = -1 if side == "Sell" else 1  # Utility variable to convert parameters between longs/shorts.
+        # Utility variable to convert parameters between longs/shorts.
+        side_multiplier = -1 if side == "Sell" else 1
 
         # Convert to int because type returned by DataFrame is not JSON Serializable.
         current_price = float(self.data["closeEp"].tail(1).values[0])
 
         # If order type is Market, the price is irrelevant, so calculate on the assumption it will be a Limit order.
-        price = current_price - (side_multiplier * self.strategy.order_entry_params["limit_margin_ep"])
+        price = current_price - \
+            (side_multiplier *
+             self.strategy.order_entry_params["limit_margin_ep"])
 
         user = User(self.strategy)
         leverage = self.signal.confidence
@@ -103,9 +107,11 @@ class NewOrder(object):
         value = user.wallet_balance * wallet_ratio * 0.5 * leverage
 
         if self.strategy.currency == "BTC":
-            quantity = value * (current_price / Phemex.SCALE_EP)  # Because trading in BTC to USD. Value is always USD.
+            # Because trading in BTC to USD. Value is always USD.
+            quantity = value * (current_price / Phemex.SCALE_EP)
         else:
-            quantity = value / (current_price / Phemex.SCALE_EP)  # Because trading in USD to coin. Value is always USD.
+            # Because trading in USD to coin. Value is always USD.
+            quantity = value / (current_price / Phemex.SCALE_EP)
 
         quantity = int(quantity / self.strategy.contract_size)
 
@@ -115,8 +121,10 @@ class NewOrder(object):
         tp = self.strategy.order_entry_params["safety_tp"]
         sl = self.strategy.order_entry_params["safety_sl"]
 
-        take_profit = (1 + (tp * side_multiplier)) * current_price if tp else None
-        stop_loss = (1 - (sl * side_multiplier)) * current_price if sl else None
+        take_profit = (1 + (tp * side_multiplier)) * \
+            current_price if tp else None
+        stop_loss = (1 - (sl * side_multiplier)) * \
+            current_price if sl else None
 
         params = {
             "actionBy": "FromOrderPlacement",
@@ -149,7 +157,8 @@ class NewOrder(object):
         position = user.open_position
 
         side = "Buy" if position.side == "Sell" else "Sell"
-        side_multiplier = -1 if side == "Sell" else 1  # Utility variable to convert parameters between longs/shorts.
+        # Utility variable to convert parameters between longs/shorts.
+        side_multiplier = -1 if side == "Sell" else 1
 
         # Convert to int because type returned by DataFrame is not JSON Serializable.
         current_price = int(self.data["closeEp"].tail(1).values[0])
@@ -168,7 +177,9 @@ class NewOrder(object):
             price = relative_price - (relative_price * side_multiplier *
                                       self.strategy.order_exit_params["auto_take_profit"])
         else:
-            price = relative_price - (side_multiplier * self.strategy.order_exit_params["limit_margin_ep"])
+            price = relative_price - \
+                (side_multiplier *
+                 self.strategy.order_exit_params["limit_margin_ep"])
 
         ord_type = self.strategy.order_exit_params["ord_type"]
         time_in_force = "PostOnly" if ord_type == "Limit" else "GoodTillCancel"

@@ -1,0 +1,48 @@
+{
+  "type": "RANDOM",
+  "currency": "BTC",
+  "contract_size": 1,
+  "symbol": "BTCUSD",
+  "klines": {
+    "period": 60,
+    "symbol": "BTCUSD"
+  },
+  "indicators": [],
+  "conditions": {
+    "enter": [
+      {
+        "id": 1,
+        "action": "ENTER_LONG",
+        "confidence": 1,
+        "params": []
+      },
+      {
+        "id": 2,
+        "action": "ENTER_SHORT",
+        "confidence": 1,
+        "params": []
+      }
+    ],
+    "exit": {
+      "action": "EXIT",
+      "stop_loss": -0.005,
+      "take_profit": 0.005,
+      "indicators": []
+    }
+  },
+  "order_params": {
+    "entry": {
+      "ord_type": "Market",
+      "limit_margin_ep": 5000,
+      "wallet_ratio": 0.1,
+      "safety_tp": 0.003,
+      "safety_sl": 0.003,
+      "entry_patience": 60
+    },
+    "exit": {
+      "ord_type": "Limit",
+      "limit_margin_ep": 5000,
+      "auto_take_profit": 0.0025
+    }
+  }
+}
